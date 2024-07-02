@@ -1,4 +1,4 @@
-package luaScriptEngine
+package luaEngine
 
 import lua "github.com/yuin/gopher-lua"
 

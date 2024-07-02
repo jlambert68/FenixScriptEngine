@@ -1,4 +1,4 @@
-package luaScriptEngine
+package luaEngine
 
 import (
 	_ "embed"

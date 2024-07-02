@@ -1,4 +1,4 @@
-module FenixScriptEngine
+module github.com/jlambert68/FenixScriptEngine
 
 go 1.22
 

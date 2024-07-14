@@ -16,11 +16,12 @@ var TestDataModel TestDataModelStruct
 // TestDataFromSimpleTestDataAreaStruct
 // Struct for holding TestData for one TestDataArea within a TestDataDomain
 type TestDataFromSimpleTestDataAreaStruct struct {
-	TestDataDomainUuid string
-	TestDataDomainName string
-	TestDataAreaUuid   string
-	TestDataAreaName   string
-	Headers            []struct {
+	TestDataDomainUuid         string
+	TestDataDomainName         string
+	TestDataDomainTemplateName string
+	TestDataAreaUuid           string
+	TestDataAreaName           string
+	Headers                    []struct {
 		ShouldHeaderActAsFilter bool
 		HeaderName              string
 		HeaderUiName            string

@@ -26,7 +26,8 @@ type TestDataFromSimpleTestDataAreaStruct struct {
 		HeaderName              string
 		HeaderUiName            string
 	}
-	TestDataRows [][]string
+	TestDataRows           [][]string
+	TestDataFileSha256Hash string
 }
 
 // TestDataForGroupObjectStruct

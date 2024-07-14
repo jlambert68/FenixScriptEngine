@@ -2,7 +2,6 @@ package testDataEngine
 
 import (
 	"bytes"
-	"embed"
 	"encoding/csv"
 	"io"
 	"log"
@@ -13,8 +12,8 @@ import (
 // and having a data divider of type 'divider'
 // The first row must consist of column headers
 func ImportEmbeddedSimpleCsvTestDataFile(
-	embeddedFilePtr *embed.FS,
-	fileNameAndRelativePath string,
+	embeddedFileAsByteArray []byte,
+	//fileNameAndRelativePath string,
 	divider rune) (
 	testDataFromTestDataArea TestDataFromSimpleTestDataAreaStruct) {
 
@@ -39,13 +38,13 @@ func ImportEmbeddedSimpleCsvTestDataFile(
 	}
 
 	// Read the embedded file
-	data, err := embeddedFilePtr.ReadFile(fileNameAndRelativePath)
-	if err != nil {
-		log.Fatalf("Error reading the embedded file: %v", err)
-	}
+	//data, err := embeddedFilePtr.ReadFile(fileNameAndRelativePath)
+	//if err != nil {
+	//	log.Fatalf("Error reading the embedded file: %v", err)
+	//}
 
 	// Parse the CSV file
-	r := csv.NewReader(bytes.NewReader(data))
+	r := csv.NewReader(bytes.NewReader(embeddedFileAsByteArray))
 	r.Comma = divider
 
 	// Read the headers as 1st row

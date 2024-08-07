@@ -51,43 +51,43 @@ func ImportEmbeddedSimpleCsvTestDataFile(
 	// Read the headers as 1st row
 	testDataHeadersInCsv, err = r.Read()
 	if err != nil {
-		log.Fatalf("Error reading headers as 1st row: %v", err)
+		log.Fatalf("Error reading headers as 1st row: %v; '%s'", err, testDataHeadersInCsv)
 	}
 
 	// Read the TestDataDomainUuid as 2nd row
 	testDataDomainUuid, err = r.Read()
 	if err != nil && err.Error() != "record on line 2: wrong number of fields" {
-		log.Fatalf("Error reading TestDataDomainUuid row as 2nd row: %v", err)
+		log.Fatalf("Error reading TestDataDomainUuid row as 2nd row: %v; '%s'", err, testDataDomainUuid)
 	}
 
 	// Read the TestDataDomainName as 3rd row
 	testDataDomainName, err = r.Read()
 	if err != nil && err.Error() != "record on line 3: wrong number of fields" {
-		log.Fatalf("Error reading TestDataDomainName row as 3rd row: %v", err)
+		log.Fatalf("Error reading TestDataDomainName row as 3rd row: %v; '%s'", err, testDataDomainName)
 	}
 
 	// Read the TestDataDomainTemplateName as 4th row
 	testDataDomainTemplateName, err = r.Read()
 	if err != nil && err.Error() != "record on line 4: wrong number of fields" {
-		log.Fatalf("Error reading TestDataDomainTemplateName row as 4th row: %v", err)
+		log.Fatalf("Error reading TestDataDomainTemplateName row as 4th row: %v; '%s'", err, testDataDomainTemplateName)
 	}
 
 	// Read the TestDataAreaUuid as 5th row
 	testDataAreaUuid, err = r.Read()
 	if err != nil && err.Error() != "record on line 5: wrong number of fields" {
-		log.Fatalf("Error reading TestDataAreaUuid row as 5th row: %v", err)
+		log.Fatalf("Error reading TestDataAreaUuid row as 5th row: %v; '%s'", err, testDataAreaUuid)
 	}
 
 	// Read the TestDataAreaName as 6th row
 	testDataAreaName, err = r.Read()
 	if err != nil && err.Error() != "record on line 6: wrong number of fields" {
-		log.Fatalf("Error reading TestDataAreaName row as 6th row: %v", err)
+		log.Fatalf("Error reading TestDataAreaName row as 6th row: %v; '%s'", err, testDataAreaName)
 	}
 
 	// Read the header filters as 7th row
 	testDataHeadersUsedInFiltersInCsv, err = r.Read()
-	if err != nil && err.Error() != "record on line : wrong number of fields" {
-		log.Fatalf("Error reading Headerfilter row as 7th row: %v", err)
+	if err != nil && err.Error() != "record on line 7: wrong number of fields" {
+		log.Fatalf("Error reading Headerfilter row as 7th row: %v; '%s'", err, testDataHeadersUsedInFiltersInCsv)
 	}
 
 	// Iterate through the records and extract rows 8 and forward as data

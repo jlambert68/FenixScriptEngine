@@ -25,6 +25,7 @@ func ImportEmbeddedSimpleCsvTestDataFile(
 	var testDataHeadersInCsv []string
 	var testDataDomainUuid []string
 	var testDataDomainName []string
+	var testDataDomainTemplateName []string
 	var testDataAreaUuid []string
 	var testDataAreaName []string
 	var testDataHeadersUsedInFiltersInCsv []string
@@ -65,25 +66,31 @@ func ImportEmbeddedSimpleCsvTestDataFile(
 		log.Fatalf("Error reading TestDataDomainName row as 3rd row: %v", err)
 	}
 
-	// Read the TestDataAreaUuid as 4th row
-	testDataAreaUuid, err = r.Read()
+	// Read the TestDataDomainTemplateName as 4th row
+	testDataDomainTemplateName, err = r.Read()
 	if err != nil && err.Error() != "record on line 4: wrong number of fields" {
-		log.Fatalf("Error reading TestDataAreaUuid row as 4th row: %v", err)
+		log.Fatalf("Error reading TestDataDomainTemplateName row as 4th row: %v", err)
 	}
 
-	// Read the TestDataAreaName as 5th row
-	testDataAreaName, err = r.Read()
+	// Read the TestDataAreaUuid as 5th row
+	testDataAreaUuid, err = r.Read()
 	if err != nil && err.Error() != "record on line 5: wrong number of fields" {
-		log.Fatalf("Error reading TestDataAreaName row as 5th row: %v", err)
+		log.Fatalf("Error reading TestDataAreaUuid row as 5th row: %v", err)
 	}
 
-	// Read the header filters as 6th row
-	testDataHeadersUsedInFiltersInCsv, err = r.Read()
+	// Read the TestDataAreaName as 6th row
+	testDataAreaName, err = r.Read()
 	if err != nil && err.Error() != "record on line 6: wrong number of fields" {
-		log.Fatalf("Error reading Headerfilter row as 6th row: %v", err)
+		log.Fatalf("Error reading TestDataAreaName row as 6th row: %v", err)
 	}
 
-	// Iterate through the records and extract rows
+	// Read the header filters as 7th row
+	testDataHeadersUsedInFiltersInCsv, err = r.Read()
+	if err != nil && err.Error() != "record on line : wrong number of fields" {
+		log.Fatalf("Error reading Headerfilter row as 7th row: %v", err)
+	}
+
+	// Iterate through the records and extract rows 8 and forward as data
 	for {
 		rowRecord, errOrEOF := r.Read()
 
@@ -131,12 +138,13 @@ func ImportEmbeddedSimpleCsvTestDataFile(
 
 	// Create full TestDataFromTestDataArea-object
 	testDataFromTestDataArea = TestDataFromSimpleTestDataAreaStruct{
-		TestDataDomainUuid: testDataDomainUuid[0],
-		TestDataDomainName: testDataDomainName[0],
-		TestDataAreaUuid:   testDataAreaUuid[0],
-		TestDataAreaName:   testDataAreaName[0],
-		Headers:            testDataHeaders,
-		TestDataRows:       testDataRows,
+		TestDataDomainUuid:         testDataDomainUuid[0],
+		TestDataDomainName:         testDataDomainName[0],
+		TestDataDomainTemplateName: testDataDomainTemplateName[0],
+		TestDataAreaUuid:           testDataAreaUuid[0],
+		TestDataAreaName:           testDataAreaName[0],
+		Headers:                    testDataHeaders,
+		TestDataRows:               testDataRows,
 	}
 
 	return testDataFromTestDataArea

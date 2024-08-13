@@ -8,6 +8,10 @@ import (
 // List the current TestDataGroups that the User has
 func (testDataForGroupObject *TestDataForGroupObjectStruct) ListTestDataGroups() (testDataPointGroupsAsStringSlice []string) {
 
+	if testDataForGroupObject == nil || testDataForGroupObject.TestDataPointGroups == nil {
+		return []string{}
+	}
+
 	// Loop all 'TestDataPointGroups'
 	for _, tempTestDataPointGroup := range testDataForGroupObject.TestDataPointGroups {
 		testDataPointGroupsAsStringSlice = append(testDataPointGroupsAsStringSlice, string(tempTestDataPointGroup))
@@ -23,6 +27,10 @@ func (testDataForGroupObject *TestDataForGroupObjectStruct) ListTestDataGroups()
 // ListTestDataGroupPointsForAGroup
 // List the current TestDataGroupPoints for a specific TestDataGroup
 func (testDataForGroupObject *TestDataForGroupObjectStruct) ListTestDataGroupPointsForAGroup(testDataGroup string) (testDataPointGroupsAsStringSlice []string) {
+
+	if testDataForGroupObject == nil || testDataForGroupObject.ChosenTestDataPointsPerGroupMap == nil {
+		return []string{}
+	}
 
 	// Extract the map with the TestDataPoints
 	var tempTestDataPointNameMap TestDataPointNameMapType
@@ -45,6 +53,10 @@ func (testDataForGroupObject *TestDataForGroupObjectStruct) ListTestDataGroupPoi
 // List the current TestDataRow for a specific TestDataGroupPoint
 func (testDataForGroupObject *TestDataForGroupObjectStruct) ListTestDataRowsForAGroupPoint(testDataGroup string, testDataGroupPoint string) (
 	testDataGroupPointRowsSummaryValueAsStringSlice []string) {
+
+	if testDataForGroupObject == nil || testDataForGroupObject.ChosenTestDataPointsPerGroupMap == nil {
+		return []string{}
+	}
 
 	//fixa denna
 

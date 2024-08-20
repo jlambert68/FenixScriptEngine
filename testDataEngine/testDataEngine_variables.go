@@ -66,9 +66,10 @@ type TestDataModelStruct struct {
 // TestDataDomainModelStruct
 // DataData for one Domain
 type TestDataDomainModelStruct struct {
-	TestDataDomainUuid TestDataDomainUuidType
-	TestDataDomainName TestDataDomainNameType
-	TestDataAreasMap   *map[TestDataAreaUuidType]*TestDataAreaStruct
+	TestDataDomainUuid         TestDataDomainUuidType
+	TestDataDomainName         TestDataDomainNameType
+	TestDataDomainTemplateName TestDataDomainTemplateNameType
+	TestDataAreasMap           *map[TestDataAreaUuidType]*TestDataAreaStruct
 }
 
 // TestDataAreaStruct
@@ -76,6 +77,7 @@ type TestDataDomainModelStruct struct {
 type TestDataAreaStruct struct {
 	TestDataDomainUuid                   TestDataDomainUuidType
 	TestDataDomainName                   TestDataDomainNameType
+	TestDataDomainTemplateName           TestDataDomainTemplateNameType
 	TestDataAreaUuid                     TestDataAreaUuidType
 	TestDataAreaName                     TestDataAreaNameType
 	TestDataValuesForRowMap              *map[TestDataPointRowUuidType]*[]*TestDataPointValueStruct
@@ -91,6 +93,7 @@ type TestDataAreaStruct struct {
 type TestDataPointValueStruct struct {
 	TestDataDomainUuid           TestDataDomainUuidType
 	TestDataDomainName           TestDataDomainNameType
+	TestDataDomainTemplateName   TestDataDomainTemplateNameType
 	TestDataAreaUuid             TestDataAreaUuidType
 	TestDataAreaName             TestDataAreaNameType
 	TestDataColumnUuid           TestDataColumnUuidType

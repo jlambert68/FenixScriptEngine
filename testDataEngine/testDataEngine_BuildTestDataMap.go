@@ -44,6 +44,7 @@ func AddTestDataToTestDataModel(
 	testDataArea = &TestDataAreaStruct{
 		TestDataDomainUuid:                   TestDataDomainUuidType(testDataFromTestDataArea.TestDataDomainUuid),
 		TestDataDomainName:                   TestDataDomainNameType(testDataFromTestDataArea.TestDataDomainName),
+		TestDataDomainTemplateName:           TestDataDomainTemplateNameType(testDataFromTestDataArea.TestDataDomainTemplateName),
 		TestDataAreaUuid:                     TestDataAreaUuidType(testDataFromTestDataArea.TestDataAreaUuid),
 		TestDataAreaName:                     TestDataAreaNameType(testDataFromTestDataArea.TestDataAreaName),
 		TestDataValuesForRowMap:              &tempTestDataValuesForRowMap,
@@ -60,9 +61,10 @@ func AddTestDataToTestDataModel(
 
 	var tempTestDataDomainModel TestDataDomainModelStruct
 	tempTestDataDomainModel = TestDataDomainModelStruct{
-		TestDataDomainUuid: TestDataDomainUuidType(testDataFromTestDataArea.TestDataDomainUuid),
-		TestDataDomainName: TestDataDomainNameType(testDataFromTestDataArea.TestDataDomainName),
-		TestDataAreasMap:   &tempTestDataAreasMap,
+		TestDataDomainUuid:         TestDataDomainUuidType(testDataFromTestDataArea.TestDataDomainUuid),
+		TestDataDomainName:         TestDataDomainNameType(testDataFromTestDataArea.TestDataDomainName),
+		TestDataDomainTemplateName: TestDataDomainTemplateNameType(testDataFromTestDataArea.TestDataDomainTemplateName),
+		TestDataAreasMap:           &tempTestDataAreasMap,
 	}
 
 	tempTestDataAreasMap[TestDataAreaUuidType(testDataFromTestDataArea.TestDataAreaUuid)] = testDataArea
@@ -95,6 +97,7 @@ func AddTestDataToTestDataModel(
 			testDataPoint = &TestDataPointValueStruct{
 				TestDataDomainUuid:           TestDataDomainUuidType(testDataFromTestDataArea.TestDataDomainUuid),
 				TestDataDomainName:           TestDataDomainNameType(testDataFromTestDataArea.TestDataDomainName),
+				TestDataDomainTemplateName:   TestDataDomainTemplateNameType(testDataFromTestDataArea.TestDataDomainTemplateName),
 				TestDataAreaUuid:             TestDataAreaUuidType(testDataFromTestDataArea.TestDataAreaUuid),
 				TestDataAreaName:             TestDataAreaNameType(testDataFromTestDataArea.TestDataAreaName),
 				TestDataColumnUuid:           TestDataColumnUuidType(columnUuid.String()),

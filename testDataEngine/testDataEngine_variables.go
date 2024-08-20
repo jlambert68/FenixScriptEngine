@@ -80,6 +80,7 @@ type TestDataAreaStruct struct {
 	TestDataDomainTemplateName           TestDataDomainTemplateNameType
 	TestDataAreaUuid                     TestDataAreaUuidType
 	TestDataAreaName                     TestDataAreaNameType
+	TestDataFileSha256Hash               TestDataFileSha256HashType
 	TestDataValuesForRowMap              *map[TestDataPointRowUuidType]*[]*TestDataPointValueStruct
 	TestDataValuesForRowNameMap          *map[TestDataValueNameType]*[]TestDataPointRowUuidType
 	TestDataValuesForColumnMap           *map[TestDataColumnUuidType]*[]*TestDataPointValueStruct
@@ -96,6 +97,7 @@ type TestDataPointValueStruct struct {
 	TestDataDomainTemplateName   TestDataDomainTemplateNameType
 	TestDataAreaUuid             TestDataAreaUuidType
 	TestDataAreaName             TestDataAreaNameType
+	TestDataFileSha256Hash       TestDataFileSha256HashType
 	TestDataColumnUuid           TestDataColumnUuidType
 	TestDataColumnDataName       TestDataColumnDataNameType
 	TestDataColumnUIName         TestDataColumnUINameType
@@ -136,6 +138,10 @@ type TestDataAreaUuidType string
 // TestDataAreaNameType
 // The Name for a specific TestData-area within the Domain
 type TestDataAreaNameType string
+
+// TestDataFileSha256HashType
+// The File hash for one TestArea. Used to understand from which file the TestData origin from
+type TestDataFileSha256HashType string
 
 // TestDataDomainOrAreaUuidType
 // The UUID for a specific TestData-domain or TestData-area

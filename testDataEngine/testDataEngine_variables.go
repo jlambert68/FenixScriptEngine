@@ -35,6 +35,11 @@ type TestDataFromSimpleTestDataAreaStruct struct {
 // Used for keep track of Group-TestData per TestCase or per TestSuite
 type TestDataForGroupObjectStruct struct {
 
+	// The selected TestData for the TestCase
+	SelectedTestDataGroup           string
+	SelectedTestDataPoint           string
+	SelectedTestDataPointRowSummary string
+
 	// The slices for Groups ans TestDataPoints for a Group
 	TestDataPointGroups     []TestDataPointGroupNameType // Define TestDataPointGroups
 	TestDataPointsForAGroup []TestDataValueNameType      // Define TestDataPointGroups

@@ -41,6 +41,10 @@ type TestDataForGroupObjectStruct struct {
 	SelectedTestDataPointRowSummary  string
 	SelectedTestDataPointRowUniqueId string
 
+	// When all of SelectedTestDataGroup, SelectedTestDataPoint and SelectedTestDataPointRowSummary
+	// are populated then TestDataColumnDataNameToValueMap will be created with values
+	TestDataColumnDataNameToValueMap map[string]string // map[TestDataColumnDataNameType]TestDataValueType
+
 	// The slices for Groups ans TestDataPoints for a Group
 	TestDataPointGroups     []TestDataPointGroupNameType // Define TestDataPointGroups
 	TestDataPointsForAGroup []TestDataValueNameType      // Define TestDataPointGroups
@@ -117,6 +121,10 @@ type TestDataDomainUuidType string
 // TestDataDomainNameType
 // The Name of the Domain that owns the TestData
 type TestDataDomainNameType string
+
+// TestDataDomainTemplateNameType
+// The Name, of the Domain, used in templates
+type TestDataDomainTemplateNameType string
 
 // TestDataAreaUuidType
 // The UUID for a specific TestData-area within the Domain
@@ -203,6 +211,7 @@ type TestDataPointRowUuidStruct struct {
 type DataPointTypeForGroupsStruct struct {
 	TestDataDomainUuid            TestDataDomainUuidType
 	TestDataDomainName            TestDataDomainNameType
+	TestDataDomainTemplateName    TestDataDomainTemplateNameType
 	TestDataAreaUuid              TestDataAreaUuidType
 	TestDataAreaName              TestDataAreaNameType
 	TestDataPointName             TestDataValueNameType

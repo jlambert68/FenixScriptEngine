@@ -36,9 +36,10 @@ type TestDataFromSimpleTestDataAreaStruct struct {
 type TestDataForGroupObjectStruct struct {
 
 	// The selected TestData for the TestCase
-	SelectedTestDataGroup           string
-	SelectedTestDataPoint           string
-	SelectedTestDataPointRowSummary string
+	SelectedTestDataGroup            string
+	SelectedTestDataPoint            string
+	SelectedTestDataPointRowSummary  string
+	SelectedTestDataPointRowUniqueId string
 
 	// The slices for Groups ans TestDataPoints for a Group
 	TestDataPointGroups     []TestDataPointGroupNameType // Define TestDataPointGroups

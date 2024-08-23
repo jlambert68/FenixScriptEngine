@@ -36,10 +36,15 @@ type TestDataFromSimpleTestDataAreaStruct struct {
 type TestDataForGroupObjectStruct struct {
 
 	// The selected TestData for the TestCase
-	SelectedTestDataGroup            string
-	SelectedTestDataPoint            string
-	SelectedTestDataPointRowSummary  string
-	SelectedTestDataPointRowUniqueId string
+	SelectedTestDataGroup              string
+	SelectedTestDataPoint              string
+	SelectedTestDataPointRowSummary    string
+	SelectedTestDataPointRowUniqueId   string
+	SelectedTestDataDomainUuid         string
+	SelectedTestDataDomainName         string
+	SelectedTestDataDomainTemplateName string
+	SelectedTestDataTestDataAreaUuid   string
+	SelectedTestDataAreaName           string
 
 	// When all of SelectedTestDataGroup, SelectedTestDataPoint and SelectedTestDataPointRowSummary
 	// are populated then TestDataColumnDataNameToValueMap will be created with values

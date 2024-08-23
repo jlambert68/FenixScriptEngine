@@ -92,13 +92,18 @@ func (testDataForGroupObject *TestDataForGroupObjectStruct) GetTestDataPointValu
 	testDataGroup string,
 	testDataPointName string,
 	testDataPointRowSummaryValue string) (
-	testDataColumnDataNameMap map[string]string) { // map[TestDataColumnDataNameType]TestDataValueType
+	testDataColumnDataNameMap map[string]string,
+	domainUuid string,
+	domainName string,
+	domainTemplateName string,
+	testDataAreaUuid string,
+	testDataAreaName string) { // map[TestDataColumnDataNameType]TestDataValueType
 
 	// Initiate response-map
 	testDataColumnDataNameMap = make(map[string]string)
 
 	if testDataPointName == "" || testDataPointRowSummaryValue == "" {
-		return testDataColumnDataNameMap
+		return testDataColumnDataNameMap, "", "", "", "", ""
 	}
 
 	// Get 'TestDataPointRowUuid' base on 'TestDataPointRowSummaryValue'
@@ -111,11 +116,19 @@ func (testDataForGroupObject *TestDataForGroupObjectStruct) GetTestDataPointValu
 	dataPointRowsSlicePtr := tempTestDataPointNameMap[TestDataValueNameType(testDataPointName)]
 	dataPointRowsSlice := *dataPointRowsSlicePtr
 
+	// Extract general data from the TestDataRow
+	domainUuid = string(dataPointRowsSlice[0].TestDataDomainUuid)
+	domainName = string(dataPointRowsSlice[0].TestDataDomainName)
+	domainTemplateName = string(dataPointRowsSlice[0].TestDataDomainTemplateName)
+	testDataAreaUuid = string(dataPointRowsSlice[0].TestDataAreaUuid)
+	testDataAreaName = string(dataPointRowsSlice[0].TestDataAreaName)
+
 	// Refill the slice with all TestDataPoints
 	for _, testDataPointRowUuiObject := range dataPointRowsSlice[0].SelectedTestDataPointUuidMap {
 
 		if string(testDataPointRowUuiObject.TestDataPointRowValuesSummary) == testDataPointRowSummaryValue {
 			testDataPointRowUuid = string(testDataPointRowUuiObject.TestDataPointRowUuid)
+
 			break
 		}
 	}
@@ -150,7 +163,12 @@ func (testDataForGroupObject *TestDataForGroupObjectStruct) GetTestDataPointValu
 
 	}
 
-	return testDataColumnDataNameMap
+	return testDataColumnDataNameMap,
+		domainUuid,
+		domainName,
+		domainTemplateName,
+		testDataAreaUuid,
+		testDataAreaName
 
 }
 

@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func parseAndFormatPlaceholders(inputText string, testDataPointValuesPtr *map[string]string, randomUuidForScriptEngine string) (
+func ParseAndFormatPlaceholders(inputText string, testDataPointValuesPtr *map[string]string, randomUuidForScriptEngine string) (
 	tempRichText *widget.RichText,
 	tempRichTextWithValues *widget.RichText,
 	tempPureText string) {

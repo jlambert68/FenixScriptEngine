@@ -24,11 +24,16 @@ func ParseAndFormatPlaceholders(inputText string, testDataPointValuesPtr *map[st
 
 	var currentText string
 	var inputText_secondpart string
+	var inputText_lenght, inputText_secondpart_lenght int
+	var inputText_lenghtDiff int
 
 	for len(inputText) > 0 {
+		inputText_lenght = len(inputText)
 		startIndex := strings.Index(inputText, "{{")
 		inputText_secondpart = inputText[startIndex+2:]
-		endIndex := strings.Index(inputText_secondpart, "}}") - 2
+		inputText_secondpart_lenght = len(inputText_secondpart)
+		inputText_lenghtDiff = inputText_lenght - inputText_secondpart_lenght
+		endIndex := strings.Index(inputText_secondpart, "}}") + 2 + inputText_lenghtDiff
 
 		if startIndex != -1 && endIndex != -1 && endIndex > startIndex {
 			// Add the text before {{

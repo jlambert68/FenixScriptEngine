@@ -28,7 +28,7 @@ func loadFenixLuaScripts() (fenixLuaScripts []LuaScriptsStruct) {
 
 	//fenixLuaScripts = append(fenixLuaScripts, LuaScriptsStruct{"date", date})
 	fenixLuaScripts = append(fenixLuaScripts, LuaScriptsStruct{"fenix_ControlledUniqueId", fenix_ControlledUniqueId})
-	fenixLuaScripts = append(fenixLuaScripts, LuaScriptsStruct{"fenix_ControlledUniqueId", fenix_ControlledUniqueId})
+	fenixLuaScripts = append(fenixLuaScripts, LuaScriptsStruct{"fenix_RandomPositiveDecimalValue", fenix_RandomPositiveDecimalValue})
 	fenixLuaScripts = append(fenixLuaScripts, LuaScriptsStruct{"fenix_TodayDateShift", fenix_TodayDateShift})
 
 	return fenixLuaScripts

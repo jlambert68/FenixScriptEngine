@@ -269,7 +269,10 @@ func loadAndExecuteScript(L *lua.LState, luaScript LuaScriptsStruct) (err error)
 		L.PreloadModule(luaScript.LuaScriptName, loader)
 
 	*/
-	if fn, err := L.Load(bytes.NewReader(luaScript.LuaScript), luaScript.LuaScriptName); err != nil {
+
+	fmt.Println(fmt.Sprintf("Load scrip: '%s'", luaScript.LuaScriptName))
+
+	if fn, err := L.Load(bytes.NewReader(luaScript.LuaScript), "luaScript.LuaScriptName"); err != nil {
 		return err
 	} else {
 		L.Push(fn)
@@ -279,6 +282,7 @@ func loadAndExecuteScript(L *lua.LState, luaScript LuaScriptsStruct) (err error)
 	return err
 }
 
+/*
 func preloadLuaModule(L *lua.LState, moduleName string, moduleCode []byte) {
 	// Get the 'package.preload' table
 	preload := L.GetField(L.GetField(L.Get(lua.EnvironIndex), "package"), "preload").(*lua.LTable)
@@ -290,6 +294,36 @@ func preloadLuaModule(L *lua.LState, moduleName string, moduleCode []byte) {
 		}
 		// Return 0 since module code should set values in the global scope or return them
 		return 0
+	})
+	// Set the loader function in 'package.preload'
+	L.SetField(preload, moduleName, loader)
+}
+*/
+
+func preloadLuaModule(L *lua.LState, moduleName string, moduleCode []byte) {
+	// Get the 'package.preload' table
+	packageTbl := L.GetGlobal("package").(*lua.LTable)
+	preload := L.GetField(packageTbl, "preload").(*lua.LTable)
+
+	// Create a loader function
+	loader := L.NewFunction(func(L *lua.LState) int {
+		// Compile the module code into a function
+		fn, err := L.LoadString(string(moduleCode))
+		if err != nil {
+			L.RaiseError("Error compiling module %s: %v", moduleName, err)
+			return 0
+		}
+		// Call the compiled function to execute the module code
+		if err := L.CallByParam(lua.P{
+			Fn:      fn,
+			NRet:    1,    // Expecting the module to return one value
+			Protect: true, // Run in protected mode
+		}); err != nil {
+			L.RaiseError("Error running module %s: %v", moduleName, err)
+			return 0
+		}
+		// The module's return value is now on top of the stack
+		return 1 // Indicate that one value is being returned
 	})
 	// Set the loader function in 'package.preload'
 	L.SetField(preload, moduleName, loader)

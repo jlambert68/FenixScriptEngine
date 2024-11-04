@@ -52,6 +52,8 @@ local osdate = os.date
 local floor = math.floor
 local ceil  = math.ceil
 local abs   = math.abs
+
+
 -- removes the decimal part of a number
 local function fix(n) n = tonumber(n) return n and ((n > 0 and floor or ceil)(n)) end
 -- returns the modulo n % d;
@@ -741,3 +743,4 @@ return date
 --#else
 --$return date_from
 --#end
+

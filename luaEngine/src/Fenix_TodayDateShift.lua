@@ -3,6 +3,8 @@ local date = require('date')
 -- Function to shift the current date by a given number of days
 function Fenix_TodayShiftDay(inputTable)
 
+    --print("Package Path: " .. package.path)
+
     local d = date()
 
     --inputTable = {
@@ -156,6 +158,6 @@ function TableToString(tbl, sep)
 end
 
 -- Example invocation
---local result = Fenix_TodayShiftDay{"Fenix_TodayShiftDay", {}, {"-1"}, {true,0}}
---print(result.value)
+local result = Fenix_TodayShiftDay{"Fenix_TodayShiftDay", {}, {"-1"}, {true,0}}
+print(result.value)
 

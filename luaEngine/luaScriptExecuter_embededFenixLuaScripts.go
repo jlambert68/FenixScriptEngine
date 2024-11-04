@@ -18,13 +18,18 @@ var fenix_RandomPositiveDecimalValue []byte
 //go:embed src/Fenix_TodayDateShift.lua
 var fenix_TodayDateShift []byte
 
-// Add all files into one slice
-func loadFenixLuaScripts() (fenixLuaScripts [][]byte) {
+type LuaScriptsStruct struct {
+	LuaScriptName string
+	LuaScript     []byte
+}
 
-	fenixLuaScripts = append(fenixLuaScripts, date)
-	fenixLuaScripts = append(fenixLuaScripts, fenix_ControlledUniqueId)
-	fenixLuaScripts = append(fenixLuaScripts, fenix_RandomPositiveDecimalValue)
-	fenixLuaScripts = append(fenixLuaScripts, fenix_TodayDateShift)
+// Add all files into one slice
+func loadFenixLuaScripts() (fenixLuaScripts []LuaScriptsStruct) {
+
+	//fenixLuaScripts = append(fenixLuaScripts, LuaScriptsStruct{"date", date})
+	fenixLuaScripts = append(fenixLuaScripts, LuaScriptsStruct{"fenix_ControlledUniqueId", fenix_ControlledUniqueId})
+	fenixLuaScripts = append(fenixLuaScripts, LuaScriptsStruct{"fenix_ControlledUniqueId", fenix_ControlledUniqueId})
+	fenixLuaScripts = append(fenixLuaScripts, LuaScriptsStruct{"fenix_TodayDateShift", fenix_TodayDateShift})
 
 	return fenixLuaScripts
 }

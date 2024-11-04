@@ -12,10 +12,10 @@ import (
 
 // InitiateLuaScriptEngine
 // Initiate the Lua Script Engine
-func InitiateLuaScriptEngine(luaScriptFiles [][]byte) (err error) {
+func InitiateLuaScriptEngine(luaScriptFiles []LuaScriptsStruct) (err error) {
 
 	// Load Fenix Lua Script files
-	var fenixLuaScripts [][]byte
+	var fenixLuaScripts []LuaScriptsStruct
 	fenixLuaScripts = loadFenixLuaScripts()
 
 	// Concatenate Fenix Lua scripts with Domain supported Lua scripts
@@ -32,8 +32,13 @@ func InitiateLuaScriptEngine(luaScriptFiles [][]byte) (err error) {
 	// Load standard libraries
 	luaState.OpenLibs()
 
+	// Preload the 'date' module
+	preloadLuaModule(luaState, "date", date)
+
 	// List preloaded libraries
 	listLibraries(luaState)
+
+	fmt.Println("Lua-libs after loading Standard Libs")
 
 	// Remove or stub unsafe functions
 	//luaState.SetGlobal("io", lua.LNil) // Remove the 'io' library
@@ -42,10 +47,10 @@ func InitiateLuaScriptEngine(luaScriptFiles [][]byte) (err error) {
 	//luaState.SetGlobal("loadfile", lua.LNil) // Remove the 'loadfile' function
 
 	// Load the Lua scripts
-	for _, luaScriptFileAsByteArray := range luaScriptFilesAsByteArray {
+	for _, luaScriptFile := range luaScriptFilesAsByteArray {
 		//err = luaState.Load(string(luaScriptFileAsByteArray))
 		//_, err = luaState.Load(bytes.NewReader(luaScriptFileAsByteArray), "script")
-		loadAndExecuteScript(luaState, luaScriptFileAsByteArray)
+		loadAndExecuteScript(luaState, luaScriptFile)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -251,13 +256,43 @@ func convertToLuaTableRecursively(tempLuaState *lua.LState, goSlice []interface{
 }
 
 // Loads and executes Lua code from byte slice to define functions or execute initializations
-func loadAndExecuteScript(L *lua.LState, script []byte) error {
-	if fn, err := L.Load(bytes.NewReader(script), ""); err != nil {
+func loadAndExecuteScript(L *lua.LState, luaScript LuaScriptsStruct) (err error) {
+
+	/*
+		loader := func(L *lua.LState) int {
+			if err := L.DoString(string(luaScript.LuaScript)); err != nil {
+				L.RaiseError("Error loading date module: %v", err)
+				return 0
+			}
+			return 1
+		}
+		L.PreloadModule(luaScript.LuaScriptName, loader)
+
+	*/
+	if fn, err := L.Load(bytes.NewReader(luaScript.LuaScript), luaScript.LuaScriptName); err != nil {
 		return err
 	} else {
 		L.Push(fn)
 		return L.PCall(0, lua.MultRet, nil)
 	}
+
+	return err
+}
+
+func preloadLuaModule(L *lua.LState, moduleName string, moduleCode []byte) {
+	// Get the 'package.preload' table
+	preload := L.GetField(L.GetField(L.Get(lua.EnvironIndex), "package"), "preload").(*lua.LTable)
+	// Create a loader function
+	loader := L.NewFunction(func(L *lua.LState) int {
+		// Load and execute the module code
+		if err := L.DoString(string(moduleCode)); err != nil {
+			L.RaiseError("Error loading module %s: %v", moduleName, err)
+		}
+		// Return 0 since module code should set values in the global scope or return them
+		return 0
+	})
+	// Set the loader function in 'package.preload'
+	L.SetField(preload, moduleName, loader)
 }
 
 // Calls a Lua function with parameters and prints the result

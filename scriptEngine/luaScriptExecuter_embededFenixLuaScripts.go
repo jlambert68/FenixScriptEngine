@@ -1,4 +1,4 @@
-package luaEngine
+package scriptEngine
 
 import (
 	_ "embed"
@@ -19,11 +19,13 @@ var fenix_RandomPositiveDecimalValue []byte
 var fenix_TodayDateShift []byte
 
 type LuaScriptsStruct struct {
+	// Logical name used when loading into Lua state.
 	LuaScriptName string
-	LuaScript     []byte
+	// Raw Lua source bytes.
+	LuaScript []byte
 }
 
-// Add all files into one slice
+// loadFenixLuaScripts returns the default embedded script set bundled with the engine.
 func loadFenixLuaScripts() (fenixLuaScripts []LuaScriptsStruct) {
 
 	//fenixLuaScripts = append(fenixLuaScripts, LuaScriptsStruct{"date", date})

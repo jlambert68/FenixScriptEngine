@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
-	"github.com/jlambert68/FenixScriptEngine/luaEngine"
+	"github.com/jlambert68/FenixScriptEngine/scriptEngine"
 	"regexp"
 	"strconv"
 	"strings"
@@ -100,7 +100,7 @@ func ParseAndFormatPlaceholders(inputText string, testDataPointValuesPtr *map[st
 				functionValueSlice, err := match(currentText)
 				if err == nil {
 					//newTextFromScriptEngine = tengoScriptExecuter.ExecuteScripte(functionValueSlice)
-					newTextFromScriptEngine = luaEngine.ExecuteLuaScriptBasedOnPlaceholder(
+					newTextFromScriptEngine = scriptEngine.ExecuteLuaScriptBasedOnPlaceholder(
 						functionValueSlice, randomUuidForScriptEngine)
 
 				} else {

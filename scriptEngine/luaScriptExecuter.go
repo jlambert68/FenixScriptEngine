@@ -1,4 +1,4 @@
-package luaEngine
+package scriptEngine
 
 import (
 	"bytes"
@@ -128,6 +128,16 @@ func ExecuteLuaScriptBasedOnPlaceholder(inputParameterArray []interface{}, testC
 	useEntropyFromTestCaseExecutionUuid = inputParameterArray[4].(bool)
 	addExtraEntropyValue = inputParameterArray[5].(uint64)
 
+	// Go handlers are evaluated first so migrated functions no longer depend on Lua VM.
+	// If no Go handler is registered we continue with the legacy Lua execution path.
+	responseValue, wasHandledByGo, err := executeGoPlaceholderFunction(inputParameterArray, testCaseExecutionUuid)
+	if wasHandledByGo == true {
+		if err != nil {
+			return err.Error()
+		}
+		return responseValue
+	}
+
 	// Decide how much entropy to use
 	if useEntropyFromTestCaseExecutionUuid == true {
 
@@ -142,7 +152,7 @@ func ExecuteLuaScriptBasedOnPlaceholder(inputParameterArray []interface{}, testC
 		entropyToUse = addExtraEntropyValue
 	}
 
-	// Create Lua Entropy table
+	// Lua functions expect entropy at position 4 as a nested table: {useExecutionUUID, entropyValue}.
 	entropyTable := luaState.NewTable() // Instantiate the Lua table
 
 	// Append a boolean value
@@ -154,7 +164,7 @@ func ExecuteLuaScriptBasedOnPlaceholder(inputParameterArray []interface{}, testC
 	var goArrayToBeConvertedIntoLuaTable []interface{}
 	goArrayToBeConvertedIntoLuaTable = inputParameterArray[1:4]
 
-	// Create the Lua Input Table
+	// Build Lua input table in legacy format: {functionName, arrayIndexes, arguments, entropyTable}.
 	var luaInputTable *lua.LTable
 	luaInputTable = convertToLuaTableRecursively(luaState, goArrayToBeConvertedIntoLuaTable)
 
@@ -255,7 +265,7 @@ func convertToLuaTableRecursively(tempLuaState *lua.LState, goSlice []interface{
 	return luaTable
 }
 
-// Loads and executes Lua code from byte slice to define functions or execute initializations
+// loadAndExecuteScript compiles and runs one embedded Lua script in the shared Lua state.
 func loadAndExecuteScript(L *lua.LState, luaScript LuaScriptsStruct) (err error) {
 
 	/*
@@ -283,6 +293,7 @@ func loadAndExecuteScript(L *lua.LState, luaScript LuaScriptsStruct) (err error)
 }
 
 /*
+// preloadLuaModule registers a module loader in package.preload for `require(...)` usage.
 func preloadLuaModule(L *lua.LState, moduleName string, moduleCode []byte) {
 	// Get the 'package.preload' table
 	preload := L.GetField(L.GetField(L.Get(lua.EnvironIndex), "package"), "preload").(*lua.LTable)
@@ -329,7 +340,8 @@ func preloadLuaModule(L *lua.LState, moduleName string, moduleCode []byte) {
 	L.SetField(preload, moduleName, loader)
 }
 
-// Calls a Lua function with parameters and prints the result
+// callPlaceholderFunctionWithInputTable executes one Lua placeholder function and validates
+// the expected response contract: {success:boolean, value:string, errorMessage:string}.
 func callPlaceholderFunctionWithInputTable(L *lua.LState, funcName string, placeholderInputTable *lua.LTable) (luaFunctionResponse string, err error) {
 	//L.GetGlobal(funcName)
 	//L.Push(placeholderInputTable)

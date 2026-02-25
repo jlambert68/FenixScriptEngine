@@ -58,43 +58,20 @@ func ParseAndFormatPlaceholders(inputText string, testDataPointValuesPtr *map[st
 			currentText = inputText[startIndex : endIndex+2] // +2 to include the closing braces
 
 			var newTextFromScriptEngine string
-			if strings.Contains(currentText, ".TestData.") == true {
+			testDataToReplace := strings.TrimSpace(currentText[2 : len(currentText)-2]) // remove '{{' and '}}'
+			testDataColumnDataName, isTestDataReference, isMalformedTestDataReference := extractTestDataColumnDataName(testDataToReplace)
 
-				// Filter out Start and End '{{' and '}}'
-
-				var testDataToReplace string
-				testDataToReplace = currentText[2 : len(currentText)-2]
+			if isTestDataReference == true {
 
 				var existInMap bool
-
-				// Substring to find
-				substr := ".TestData."
-
-				// Find the position of ".TestData."
-				pos := strings.Index(testDataToReplace, substr)
-
-				// Extract the text to the right of ".TestData." if it exists
-				var testDataColumnDataName string
-				if pos != -1 {
-					// Adjust position to skip ".TestData."
-					start := pos + len(substr)
-					if start < len(testDataToReplace) {
-						testDataColumnDataName = testDataToReplace[start:]
-					}
-				} else {
-					testDataColumnDataName = ""
+				newTextFromScriptEngine, existInMap = testDataPointValues[testDataColumnDataName]
+				if existInMap == false {
+					newTextFromScriptEngine = fmt.Sprintf(
+						"TestDataColumnDataName '%s' does not exist in the TestDataMap", testDataColumnDataName)
 				}
 
-				if testDataColumnDataName != "" {
-					newTextFromScriptEngine, existInMap = testDataPointValues[testDataColumnDataName]
-					if existInMap == false {
-						newTextFromScriptEngine = fmt.Sprintf(
-							"TestDataColumnDataName '%s' does not exist in the TestDataMap", testDataColumnDataName)
-					}
-
-				} else {
-					newTextFromScriptEngine = currentText + " - is not a correct TestData-reference"
-				}
+			} else if isMalformedTestDataReference == true {
+				newTextFromScriptEngine = currentText + " - is not a correct TestData-reference"
 
 			} else {
 				functionValueSlice, err := match(currentText)
@@ -158,6 +135,55 @@ func ParseAndFormatPlaceholders(inputText string, testDataPointValuesPtr *map[st
 	}
 
 	return tempRichText, tempRichTextWithValues, tempPureText
+}
+
+// extractTestDataColumnDataName parses TestData placeholders.
+// Preferred format is `TestData.<context>.<columnName>`.
+// Legacy format `<context>.TestData.<columnName>` is still accepted.
+// The map lookup key is the final segment (column name).
+func extractTestDataColumnDataName(testDataReference string) (
+	testDataColumnDataName string,
+	isTestDataReference bool,
+	isMalformedTestDataReference bool) {
+
+	testDataReference = strings.TrimSpace(testDataReference)
+	if testDataReference == "" {
+		return "", false, false
+	}
+
+	const newFormatPrefix = "TestData."
+	if strings.HasPrefix(testDataReference, newFormatPrefix) == true {
+		suffix := strings.TrimSpace(strings.TrimPrefix(testDataReference, newFormatPrefix))
+		if suffix == "" {
+			return "", false, true
+		}
+
+		segments := strings.Split(suffix, ".")
+		lastSegment := strings.TrimSpace(segments[len(segments)-1])
+		if lastSegment == "" {
+			return "", false, true
+		}
+
+		return lastSegment, true, false
+	}
+
+	const oldFormatMarker = ".TestData."
+	if strings.Contains(testDataReference, oldFormatMarker) == true {
+		suffix := strings.TrimSpace(testDataReference[strings.Index(testDataReference, oldFormatMarker)+len(oldFormatMarker):])
+		if suffix == "" {
+			return "", false, true
+		}
+
+		segments := strings.Split(suffix, ".")
+		lastSegment := strings.TrimSpace(segments[len(segments)-1])
+		if lastSegment == "" {
+			return "", false, true
+		}
+
+		return lastSegment, true, false
+	}
+
+	return "", false, false
 }
 
 func match(text string) (mainScriptInputSlice []interface{}, err error) {

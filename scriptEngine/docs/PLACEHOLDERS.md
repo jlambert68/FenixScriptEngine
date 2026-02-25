@@ -163,31 +163,31 @@ Description:
 Format:
 
 ```text
-{{AnyPrefix.TestData.ColumnDataName}}
+{{TestData.AnyPrefix.ColumnDataName}}
 ```
 
-Only the part after `.TestData.` is used as map key.
+The final segment is used as map key (for example `TestData.Customer.FirstName` uses key `FirstName`).
 
 Example:
 
 ```text
-{{Customer.TestData.FirstName}}
-{{Customer.TestData.LastName}}
-{{Order.TestData.OrderId}}
+{{TestData.Customer.FirstName}}
+{{TestData.Customer.LastName}}
+{{TestData.Order.OrderId}}
 ```
 
 Sample result:
 
 ```text
-{{Customer.TestData.FirstName}} -> Alice
-{{Customer.TestData.LastName}} -> Doe
-{{Order.TestData.OrderId}} -> ORD-10045
+{{TestData.Customer.FirstName}} -> Alice
+{{TestData.Customer.LastName}} -> Doe
+{{TestData.Order.OrderId}} -> ORD-10045
 ```
 
 ## Template Example
 
 ```text
-Hello {{Customer.TestData.FirstName}} {{Customer.TestData.LastName}},
+Hello {{TestData.Customer.FirstName}} {{TestData.Customer.LastName}},
 
 RunDate: {{Fenix.TodayShiftDay(0)}}
 CorrelationId: {{Fenix.ControlledUniqueId(CORR-%YYYYMMDD%-%nnnn%-%A(4; 10)%)}}

@@ -1,6 +1,8 @@
 package scriptEngine
 
 import (
+	"hash/crc32"
+	"strings"
 	"testing"
 	"time"
 )
@@ -65,5 +67,78 @@ func TestExecuteGoPlaceholderFunction_ShouldIgnoreUnknownFunction(t *testing.T) 
 	}
 	if err != nil {
 		t.Fatalf("did not expect error for unknown function, got: %v", err)
+	}
+}
+
+func TestParseGoPlaceholderInput_ShouldValidateEntropyTypes(t *testing.T) {
+	baseInput := []interface{}{
+		"{{Fenix.ControlledUniqueId(X)}}",
+		"Fenix_ControlledUniqueId",
+		[]interface{}{},
+		[]interface{}{"X"},
+		true,
+		uint64(0),
+	}
+
+	invalidUseEntropy := append([]interface{}{}, baseInput...)
+	invalidUseEntropy[4] = "false"
+	_, err := parseGoPlaceholderInput(invalidUseEntropy, "execution-uuid")
+	if err == nil {
+		t.Fatalf("expected type validation error for input parameter 4")
+	}
+	if strings.Contains(err.Error(), "input parameter 4 ('useEntropyFromExecutionUuid') must be bool") == false {
+		t.Fatalf("unexpected error for input parameter 4: %v", err)
+	}
+
+	invalidExtraEntropy := append([]interface{}{}, baseInput...)
+	invalidExtraEntropy[5] = 0
+	_, err = parseGoPlaceholderInput(invalidExtraEntropy, "execution-uuid")
+	if err == nil {
+		t.Fatalf("expected type validation error for input parameter 5")
+	}
+	if strings.Contains(err.Error(), "input parameter 5 ('extraEntropy') must be uint64") == false {
+		t.Fatalf("unexpected error for input parameter 5: %v", err)
+	}
+}
+
+func TestParseGoPlaceholderInput_ShouldCalculateEntropyFromTail(t *testing.T) {
+	testCaseExecutionUUID := "f8c06f7e-0a8a-4d75-9f25-5e5fb8d2a6d3"
+
+	inputWithoutUUIDEntropy := []interface{}{
+		"{{Fenix.ControlledUniqueId(X)}(false, 7)}",
+		"Fenix_ControlledUniqueId",
+		[]interface{}{},
+		[]interface{}{"X"},
+		false,
+		uint64(7),
+	}
+
+	parsedInput, err := parseGoPlaceholderInput(inputWithoutUUIDEntropy, testCaseExecutionUUID)
+	if err != nil {
+		t.Fatalf("expected no parse error, got: %v", err)
+	}
+	if parsedInput.UseEntropyFromExecutionUUID != false {
+		t.Fatalf("expected useEntropyFromExecutionUUID=false")
+	}
+	if parsedInput.Entropy != 7 {
+		t.Fatalf("expected entropy=7 when UUID entropy is disabled, got %d", parsedInput.Entropy)
+	}
+
+	inputWithUUIDEntropy := []interface{}{
+		"{{Fenix.ControlledUniqueId(X)}(true, 7)}",
+		"Fenix_ControlledUniqueId",
+		[]interface{}{},
+		[]interface{}{"X"},
+		true,
+		uint64(7),
+	}
+
+	parsedInput, err = parseGoPlaceholderInput(inputWithUUIDEntropy, testCaseExecutionUUID)
+	if err != nil {
+		t.Fatalf("expected no parse error, got: %v", err)
+	}
+	expectedEntropy := uint64(crc32.ChecksumIEEE([]byte(testCaseExecutionUUID))) + uint64(7)
+	if parsedInput.Entropy != expectedEntropy {
+		t.Fatalf("expected entropy=%d, got %d", expectedEntropy, parsedInput.Entropy)
 	}
 }

@@ -2,6 +2,17 @@
 
 This file lists all user-entered parameters supported by each placeholder function in `scriptEngine`.
 
+## Jira Story Mapping
+
+The current placeholder set maps to the stories in `docs/Jira Epics, Stories and Subtasks.txt`:
+
+| Jira Story | Runtime Placeholder | Go File |
+|---|---|---|
+| `TemplateEngine.TodayShiftDay(arg)` | `Fenix.TodayShiftDay` | `go_placeholder_fenix_today_shift_day.go` |
+| `TemplateEngine.ControlledUniqueId(args[])` | `Fenix.ControlledUniqueId` | `go_placeholder_fenix_controlled_unique_id.go` |
+| `TemplateEngine.RandomPositiveDecimalValue(args[])` | `Fenix.RandomPositiveDecimalValue` | `go_placeholder_fenix_random_positive_decimal_value.go` |
+| `TemplateEngine.RandomPositiveDecimalValue.Sum(args[])` | `Fenix.RandomPositiveDecimalValue.Sum` | `go_placeholder_fenix_random_positive_decimal_value_sum.go` |
+
 ## Function Parameters
 
 | Function | Array Index Part `[ ... ]` | Function Arguments `( ... )` | Optional Entropy Tail `(useEntropy, extraEntropy)` |

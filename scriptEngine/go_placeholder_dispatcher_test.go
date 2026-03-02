@@ -10,10 +10,10 @@ import (
 func TestExecuteGoPlaceholderFunction_ShouldHandleRegisteredFunction(t *testing.T) {
 	// Uses a registered function name and verifies Go dispatch happens before Lua fallback.
 	input := []interface{}{
-		"{{Fenix.TodayShiftDay()}}",
+		"{{Fenix.TodayShiftDay(0)}}",
 		"Fenix_TodayShiftDay",
 		[]interface{}{},
-		[]interface{}{""},
+		[]interface{}{"0"},
 		true,
 		uint64(0),
 	}

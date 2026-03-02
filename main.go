@@ -26,20 +26,21 @@ func main() {
 		log.Fatalln("Error", err)
 	}
 
-	runExamplesFromLuaFiles()
+	runPlaceholderExamples()
 
 }
 
-func runExamplesFromLuaFiles() {
+func runPlaceholderExamples() {
 	testCaseExecutionUuid := "f8c06f7e-0a8a-4d75-9f25-5e5fb8d2a6d3"
 
 	examples := []placeholderExample{}
-	examples = append(examples, examplesFromTodayDateShiftLua()...)
-	examples = append(examples, examplesFromControlledUniqueIDLua()...)
-	examples = append(examples, examplesFromRandomPositiveDecimalValueLua()...)
+	examples = append(examples, examplesFromTodayShiftDay()...)
+	examples = append(examples, examplesFromControlledUniqueID()...)
+	examples = append(examples, examplesFromRandomPositiveDecimalValue()...)
+	examples = append(examples, examplesFromRandomPositiveDecimalValueSum()...)
 
-	fmt.Println("Running ScriptEngine examples from Lua files")
-	fmt.Println("===========================================")
+	fmt.Println("Running ScriptEngine placeholder examples")
+	fmt.Println("========================================")
 	for exampleIndex, example := range examples {
 		response := scriptEngine.ExecuteLuaScriptBasedOnPlaceholder(example.input, testCaseExecutionUuid)
 
@@ -51,26 +52,28 @@ func runExamplesFromLuaFiles() {
 			example.input,
 			response,
 		)
+
+		printRandomPositiveDecimalValueSumComponents(example.input, testCaseExecutionUuid)
 	}
 }
 
-func examplesFromTodayDateShiftLua() []placeholderExample {
+func examplesFromTodayShiftDay() []placeholderExample {
 	return []placeholderExample{
 		{
-			source:      "Fenix_TodayDateShift.lua",
-			description: "Example invocation at end of file",
+			source:      "go_placeholder_fenix_today_shift_day.go",
+			description: "Call: TemplateEngine.TodayShiftDay(0)",
 			input: buildPlaceholderInput(
-				"{{Fenix.TodayShiftDay()}}",
+				"{{Fenix.TodayShiftDay(0)}}",
 				"Fenix_TodayShiftDay",
 				[]int{},
-				[]string{},
+				[]string{"0"},
 				true,
 				0,
 			),
 		},
 		{
-			source:      "Fenix_TodayDateShift.lua",
-			description: "Commented example invocation in file",
+			source:      "go_placeholder_fenix_today_shift_day.go",
+			description: "Call: TemplateEngine.TodayShiftDay(-1)",
 			input: buildPlaceholderInput(
 				"{{Fenix.TodayShiftDay(-1)}}",
 				"Fenix_TodayShiftDay",
@@ -80,184 +83,125 @@ func examplesFromTodayDateShiftLua() []placeholderExample {
 				0,
 			),
 		},
+		{
+			source:      "go_placeholder_fenix_today_shift_day.go",
+			description: "Call: TemplateEngine.TodayShiftDay(1)",
+			input: buildPlaceholderInput(
+				"{{Fenix.TodayShiftDay(1)}}",
+				"Fenix_TodayShiftDay",
+				[]int{},
+				[]string{"1"},
+				true,
+				0,
+			),
+		},
 	}
 }
 
-func examplesFromControlledUniqueIDLua() []placeholderExample {
+func examplesFromControlledUniqueID() []placeholderExample {
 	return []placeholderExample{
 		{
-			source:      "Fenix_ControlledUniqueId.lua",
-			description: "Simple date replacement example",
+			source:      "go_placeholder_fenix_controlled_unique_id.go",
+			description: "Call: TemplateEngine.ControlledUniqueId(\"%YYYY-MM-DD%\", true, 0)",
 			input: buildPlaceholderInput(
-				"{{Fenix.ControlledUniqueId(Date: %YYYY-MM-DD%)}}",
+				"{{Fenix.ControlledUniqueId(%YYYY-MM-DD%)}(true,0)}",
 				"Fenix_ControlledUniqueId",
 				[]int{},
-				[]string{"Date: %YYYY-MM-DD%"},
+				[]string{"%YYYY-MM-DD%"},
 				true,
 				0,
 			),
 		},
 		{
-			source:      "Fenix_ControlledUniqueId.lua",
-			description: "Extended token replacement example",
+			source:      "go_placeholder_fenix_controlled_unique_id.go",
+			description: "Call: TemplateEngine.ControlledUniqueId(\"Date=%YYYY-MM-DD%, Time=%hh:mm:ss%, Compact=%hhmmss%\", true, 0)",
 			input: buildPlaceholderInput(
-				"{{Fenix.ControlledUniqueId(Date: %YYYY-MM-DD%, Date: %YYYYMMDD%, Date: %YYMMDD%, Time: %hh:mm:ss%, Time: %hhmmss%, Time: %hhmm%, Random Number: %nnnnn%, Random String: %a(5; 11)%, Random String Uppercase: %A(5; 10)%, Time: %hh:mm:ss%, Time: %hh.mm.ss% )}}",
+				"{{Fenix.ControlledUniqueId(Date=%YYYY-MM-DD%, Time=%hh:mm:ss%, Compact=%hhmmss%)}(true,0)}",
 				"Fenix_ControlledUniqueId",
-				[]int{0},
-				[]string{"Date: %YYYY-MM-DD%, Date: %YYYYMMDD%, Date: %YYMMDD%, Time: %hh:mm:ss%, Time: %hhmmss%, Time: %hhmm%, Random Number: %nnnnn%, Random String: %a(5; 11)%, Random String Uppercase: %A(5; 10)%, Time: %hh:mm:ss%, Time: %hh.mm.ss% "},
+				[]int{},
+				[]string{"Date=%YYYY-MM-DD%, Time=%hh:mm:ss%, Compact=%hhmmss%"},
 				true,
 				0,
+			),
+		},
+		{
+			source:      "go_placeholder_fenix_controlled_unique_id.go",
+			description: "Call: TemplateEngine.ControlledUniqueId(\"%nnnnn%-%a(5; 11)%-%A(5; 10)%\", true, 5) with arrayIndex=2",
+			input: buildPlaceholderInput(
+				"{{Fenix.ControlledUniqueId[2](%nnnnn%-%a(5; 11)%-%A(5; 10)%)}(true,5)}",
+				"Fenix_ControlledUniqueId",
+				[]int{2},
+				[]string{"%nnnnn%-%a(5; 11)%-%A(5; 10)%"},
+				true,
+				5,
+			),
+		},
+		{
+			source:      "go_placeholder_fenix_controlled_unique_id.go",
+			description: "Call: TemplateEngine.ControlledUniqueId(\"%n(4)%-%aA(4)%\", false, 1)",
+			input: buildPlaceholderInput(
+				"{{Fenix.ControlledUniqueId(%n(4)%-%aA(4)%)}(false,1)}",
+				"Fenix_ControlledUniqueId",
+				[]int{1},
+				[]string{"%n(4)%-%aA(4)%"},
+				false,
+				1,
 			),
 		},
 	}
 }
 
-func examplesFromRandomPositiveDecimalValueLua() []placeholderExample {
+func examplesFromRandomPositiveDecimalValue() []placeholderExample {
 	return []placeholderExample{
 		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Basic random positive decimal value",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue(2, 3)}}", "Fenix_RandomPositiveDecimalValue", []int{}, []string{"2", "3"}, true, 0),
+			source:      "go_placeholder_fenix_random_positive_decimal_value.go",
+			description: "Call: TemplateEngine.RandomPositiveDecimalValue(2, 3, 2, 3, \".\")",
+			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue(2, 3, 2, 3, \".\")}}", "Fenix_RandomPositiveDecimalValue", []int{}, []string{"2", "3", "2", "3", "."}, true, 0),
 		},
 		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Array index 1",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue[1](2, 3)}}", "Fenix_RandomPositiveDecimalValue", []int{1}, []string{"2", "3"}, true, 0),
+			source:      "go_placeholder_fenix_random_positive_decimal_value.go",
+			description: "Call: TemplateEngine.RandomPositiveDecimalValue[2](2, 3, 2, 3, \".\")",
+			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue[2](2, 3, 2, 3, \".\")}}", "Fenix_RandomPositiveDecimalValue", []int{2}, []string{"2", "3", "2", "3", "."}, true, 0),
 		},
 		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Array index 3",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue[3](2, 3)}}", "Fenix_RandomPositiveDecimalValue", []int{3}, []string{"2", "3"}, true, 0),
+			source:      "go_placeholder_fenix_random_positive_decimal_value.go",
+			description: "Call: TemplateEngine.RandomPositiveDecimalValue(1, 2, 3, 4, \".\")",
+			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue(1, 2, 3, 4, \".\")}}", "Fenix_RandomPositiveDecimalValue", []int{}, []string{"1", "2", "3", "4", "."}, true, 0),
 		},
 		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Array index 2",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue[2](2, 3)}}", "Fenix_RandomPositiveDecimalValue", []int{2}, []string{"2", "3"}, true, 0),
+			source:      "go_placeholder_fenix_random_positive_decimal_value.go",
+			description: "Call: TemplateEngine.RandomPositiveDecimalValue(1, 1, 1, 1, \".\") with entropy(true,1)",
+			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue(1, 1, 1, 1, \".\")}(true,1)}", "Fenix_RandomPositiveDecimalValue", []int{}, []string{"1", "1", "1", "1", "."}, true, 1),
 		},
 		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Sum function with one index",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue.Sum[1](2, 3)}}", "Fenix_RandomPositiveDecimalValue_Sum", []int{1}, []string{"2", "3"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Sum function with string-like negative/positive indexes",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue.Sum[-1,2](2, 3)}}", "Fenix_RandomPositiveDecimalValue_Sum", []int{-1, 2}, []string{"2", "3"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Sum function with subtraction",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue.Sum[1,-2](2, 3)}}", "Fenix_RandomPositiveDecimalValue_Sum", []int{1, -2}, []string{"2", "3"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Sum function with only negative indexes",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue.Sum[-1,-2](2, 3)}}", "Fenix_RandomPositiveDecimalValue_Sum", []int{-1, -2}, []string{"2", "3"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Sum function with three indexes",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue.Sum[1,2,3](2, 3)}}", "Fenix_RandomPositiveDecimalValue_Sum", []int{1, 2, 3}, []string{"2", "3"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Sum function with zero-padding",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue.Sum[1,2,3](2, 3, 2, 3)}}", "Fenix_RandomPositiveDecimalValue_Sum", []int{1, 2, 3}, []string{"2", "3", "2", "3"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Sum function with larger zero-padding",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue.Sum[1,2,3](2, 3, 4, 4)}}", "Fenix_RandomPositiveDecimalValue_Sum", []int{1, 2, 3}, []string{"2", "3", "4", "4"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Basic value with index 1",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue[1](2, 3)}}", "Fenix_RandomPositiveDecimalValue", []int{1}, []string{"2", "3"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Value with small integer/fraction sizes",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue(1, 2)}}", "Fenix_RandomPositiveDecimalValue", []int{}, []string{"1", "2"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Value with array index 2 and small sizes",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue[2](1, 2)}}", "Fenix_RandomPositiveDecimalValue", []int{2}, []string{"1", "2"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "One decimal place",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue(1, 1)}}", "Fenix_RandomPositiveDecimalValue", []int{}, []string{"1", "1"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "One decimal place with extra entropy",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue(1, 1)}(true,1)}", "Fenix_RandomPositiveDecimalValue", []int{}, []string{"1", "1"}, true, 1),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "One decimal place with index + extra entropy",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue[1](1, 1)}(true,1)}", "Fenix_RandomPositiveDecimalValue", []int{1}, []string{"1", "1"}, true, 1),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Zero integer digits",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue(0, 1)}}", "Fenix_RandomPositiveDecimalValue", []int{}, []string{"0", "1"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "No decimal part",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue[1](1, 0)}}", "Fenix_RandomPositiveDecimalValue", []int{1}, []string{"1", "0"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Zero and zero",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue[1](0, 0)}}", "Fenix_RandomPositiveDecimalValue", []int{1}, []string{"0", "0"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Zero with padding",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue[1](0, 0, 2, 3)}}", "Fenix_RandomPositiveDecimalValue", []int{1}, []string{"0", "0", "2", "3"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Padding when decimals exist",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue[1](0, 2, 3, 4)}}", "Fenix_RandomPositiveDecimalValue", []int{1}, []string{"0", "2", "3", "4"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Larger value with padding",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue[1](2, 2, 3, 4)}}", "Fenix_RandomPositiveDecimalValue", []int{1}, []string{"2", "2", "3", "4"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Large integer and fraction sizes",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue(6, 6)}}", "Fenix_RandomPositiveDecimalValue", []int{}, []string{"6", "6"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Large value with 10 decimals",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue(6, 10)}}", "Fenix_RandomPositiveDecimalValue", []int{}, []string{"6", "10"}, true, 0),
-		},
-		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Error case: one argument only",
+			source:      "go_placeholder_fenix_random_positive_decimal_value.go",
+			description: "Call: TemplateEngine.RandomPositiveDecimalValue[1](0)",
 			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue[1](0)}}", "Fenix_RandomPositiveDecimalValue", []int{1}, []string{"0"}, true, 0),
 		},
+	}
+}
+
+func examplesFromRandomPositiveDecimalValueSum() []placeholderExample {
+	return []placeholderExample{
 		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Error case: empty arguments",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue[1]()}}", "Fenix_RandomPositiveDecimalValue", []int{1}, []string{}, true, 0),
+			source:      "go_placeholder_fenix_random_positive_decimal_value_sum.go",
+			description: "Call: TemplateEngine.RandomPositiveDecimalValue.Sum[1](2, 3, 2, 3, \".\")",
+			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue.Sum[1](2, 3, 2, 3, \".\")}}", "Fenix_RandomPositiveDecimalValue_Sum", []int{1}, []string{"2", "3", "2", "3", "."}, true, 0),
 		},
 		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Error case: three arguments",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue[1](1,2,3)}}", "Fenix_RandomPositiveDecimalValue", []int{1}, []string{"1", "2", "3"}, true, 0),
+			source:      "go_placeholder_fenix_random_positive_decimal_value_sum.go",
+			description: "Call: TemplateEngine.RandomPositiveDecimalValue.Sum[-1,2](2, 3, 3, 3, \".\")",
+			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue.Sum[-1,2](2, 3, 3, 3, \".\")}}", "Fenix_RandomPositiveDecimalValue_Sum", []int{-1, 2}, []string{"2", "3", "3", "3", "."}, true, 0),
 		},
 		{
-			source:      "Fenix_RandomPositiveDecimalValue.lua",
-			description: "Error case: too many array indexes",
-			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue[1,2](2,3)}}", "Fenix_RandomPositiveDecimalValue", []int{1, 2}, []string{"2", "3"}, true, 0),
+			source:      "go_placeholder_fenix_random_positive_decimal_value_sum.go",
+			description: "Call: TemplateEngine.RandomPositiveDecimalValue.Sum[1,2,3](2, 3, 4, 4, \".\")",
+			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue.Sum[1,2,3](2, 3, 4, 4, \".\")}}", "Fenix_RandomPositiveDecimalValue_Sum", []int{1, 2, 3}, []string{"2", "3", "4", "4", "."}, true, 0),
+		},
+		{
+			source:      "go_placeholder_fenix_random_positive_decimal_value_sum.go",
+			description: "Call: TemplateEngine.RandomPositiveDecimalValue.Sum[1,2](2, 3, 4, 4, \",\")",
+			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue.Sum[1,2](2, 3, 4, 4, \",\")}}", "Fenix_RandomPositiveDecimalValue_Sum", []int{1, 2}, []string{"2", "3", "4", "4", ","}, true, 0),
 		},
 	}
 }
@@ -288,4 +232,73 @@ func buildPlaceholderInput(
 		useEntropyFromTestCaseExecutionUuid,
 		addExtraEntropyValue,
 	}
+}
+
+func printRandomPositiveDecimalValueSumComponents(input []interface{}, testCaseExecutionUUID string) {
+	functionName, ok := input[1].(string)
+	if ok == false || functionName != "Fenix_RandomPositiveDecimalValue_Sum" {
+		return
+	}
+
+	arrayIndexesRaw, ok := input[2].([]interface{})
+	if ok == false {
+		return
+	}
+	if len(arrayIndexesRaw) == 0 {
+		arrayIndexesRaw = []interface{}{1}
+	}
+
+	argumentsRaw, ok := input[3].([]interface{})
+	if ok == false {
+		return
+	}
+
+	useEntropyFromExecutionUUID, ok := input[4].(bool)
+	if ok == false {
+		return
+	}
+
+	extraEntropy, ok := input[5].(uint64)
+	if ok == false {
+		return
+	}
+
+	functionArguments := make([]string, 0, len(argumentsRaw))
+	for _, argument := range argumentsRaw {
+		functionArguments = append(functionArguments, fmt.Sprint(argument))
+	}
+
+	fmt.Println("sum components:")
+	for _, arrayIndexRaw := range arrayIndexesRaw {
+		arrayIndex, ok := arrayIndexRaw.(int)
+		if ok == false {
+			continue
+		}
+
+		absArrayIndex := absoluteInt(arrayIndex)
+		componentInput := buildPlaceholderInput(
+			fmt.Sprintf("{{Fenix.RandomPositiveDecimalValue[%d](...)}}", absArrayIndex),
+			"Fenix_RandomPositiveDecimalValue",
+			[]int{absArrayIndex},
+			functionArguments,
+			useEntropyFromExecutionUUID,
+			extraEntropy,
+		)
+
+		componentValue := scriptEngine.ExecuteLuaScriptBasedOnPlaceholder(componentInput, testCaseExecutionUUID)
+		appliedSign := "+"
+		if arrayIndex < 0 {
+			appliedSign = "-"
+		}
+
+		fmt.Printf("  index %d -> value %s (applied %s%s)\n", arrayIndex, componentValue, appliedSign, componentValue)
+	}
+}
+
+func absoluteInt(value int) int {
+	if value < 0 {
+		return -value
+	}
+
+	return value
 }

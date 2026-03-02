@@ -2,6 +2,23 @@
 
 This document describes the placeholders currently supported by `scriptEngine` and how to use them in templates.
 
+## Jira Story Mapping And Go File Layout
+
+The placeholders come from `docs/Jira Epics, Stories and Subtasks.txt` and are implemented with one placeholder function per Go file:
+
+| Jira Story | Runtime Placeholder | Go Function | Go File |
+|---|---|---|---|
+| `TemplateEngine.TodayShiftDay(arg)` | `Fenix.TodayShiftDay` | `goFenixTodayShiftDay` | `go_placeholder_fenix_today_shift_day.go` |
+| `TemplateEngine.ControlledUniqueId(args[])` | `Fenix.ControlledUniqueId` | `goFenixControlledUniqueID` | `go_placeholder_fenix_controlled_unique_id.go` |
+| `TemplateEngine.RandomPositiveDecimalValue(args[])` | `Fenix.RandomPositiveDecimalValue` | `goFenixRandomPositiveDecimalValue` | `go_placeholder_fenix_random_positive_decimal_value.go` |
+| `TemplateEngine.RandomPositiveDecimalValue.Sum(args[])` | `Fenix.RandomPositiveDecimalValue.Sum` | `goFenixRandomPositiveDecimalValueSum` | `go_placeholder_fenix_random_positive_decimal_value_sum.go` |
+
+Supporting/shared code:
+
+- `go_placeholder_registration.go` registers all placeholder handlers.
+- `go_placeholder_time_provider.go` defines the injectable time source for deterministic tests.
+- `go_placeholder_fenix_random_positive_decimal_helpers.go` contains shared decimal helper logic used by value and sum variants.
+
 ## Placeholder Syntax
 
 General format:

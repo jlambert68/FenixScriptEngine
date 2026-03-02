@@ -1,11 +1,6 @@
 package scriptEngine
 
-import (
-	"fmt"
-	"time"
-)
-
-var currentTimeProvider = time.Now
+import "fmt"
 
 func init() {
 	// Register built-in Go handlers at package load time.
@@ -30,32 +25,4 @@ func registerDefaultGoPlaceholderFunctions() error {
 	}
 
 	return nil
-}
-
-// goFenixTodayShiftDay replicates Fenix_TodayShiftDay behavior from Lua.
-// It supports zero or one integer argument and returns YYYY-MM-DD.
-func goFenixTodayShiftDay(input GoPlaceholderInput) (string, error) {
-	if len(input.ArrayIndexes) > 0 {
-		return "", fmt.Errorf("Error - array index is not supported. arrayIndexes: %v", input.ArrayIndexes)
-	}
-
-	var shiftDays int
-	switch len(input.Arguments) {
-	case 0:
-		shiftDays = 0
-	case 1:
-		parsedShift, err := parseSingleIntegerArgument(input.Arguments[0])
-		if err != nil {
-			return "", fmt.Errorf("Error - function argument is not an Integer: '%s'", input.Arguments[0])
-		}
-		shiftDays = parsedShift
-	default:
-		return "", fmt.Errorf("Error - more than 1 parameter argument. arguments: %v", input.Arguments)
-	}
-
-	// Work with a date-only value in local time to avoid clock-time side effects.
-	now := currentTimeProvider().In(time.Local)
-	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-
-	return today.AddDate(0, 0, shiftDays).Format("2006-01-02"), nil
 }

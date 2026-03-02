@@ -1,0 +1,474 @@
+
++ EPIC: NGC-TestAuto - Create TemplateEngine [Joakim]
+	+ STORY: Add Support for Placeholder 'TemplateEngine.TodayShiftDay(arg)' that returns a String
+
+		* SubTask: Add UnitTests for basic versions;  'TemplateEngine.TodayShiftDay(0)', 'TemplateEngine.TodayShiftDay(-n)', 'TemplateEngine.TodayShiftDay(n)'
+		*
+		* 	'TemplateEngine.TodayShiftDay('Integer') --> 'String'
+		*
+		*
+		*	-- Examples
+		*	- 'TemplateEngine.TodayShiftDay(0)' --> "2026-02-26"
+		*	- 'TemplateEngine.TodayShiftDay(-1)' --> "2026-02-25"
+		*	- 'TemplateEngine.TodayShiftDay(1)' --> "2026-02-27"
+
+		*  SubTask: Add functionality to support UnitTests for 'TemplateEngine.TodayShiftDay'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+	+ STORY: Add Support for Placeholder 'TemplateEngine.ControlledUniqueId(args[])' that returns a String
+
+		* SubTask: Add UnitTests for basic version;  'TemplateEngine.ControlledUniqueId("%YYYY-MM-DD%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+		*
+		* 	'TemplateEngine.ControlledUniqueId('string', 'boolean, 'integer')' --> 'String'
+		*
+		* 	Date/time placeholders are deterministic and ignore entropy.  Therefore 'UseTestCaseExecutionUuidForSeedEntropy' and 'ExtraEntropy' doesn't affect the result
+		*
+		*		-- Examples
+		*		- 'TemplateEngine.ControlledUniqueId("%YYYY-MM-DD%", true, 1)' --> "2026-02-26"
+		*		- 'TemplateEngine.ControlledUniqueId("%YYYY-MM-DD%", false, 1)' --> "2026-02-26"
+		*		- 'TemplateEngine.ControlledUniqueId("%YYYY-MM-DD%", true, 2)' --> "2026-02-26"
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.ControlledUniqueId("%YYYY-MM-DD%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+		* SubTask: Add UnitTests for basic version;  'TemplateEngine.ControlledUniqueId("%YYYYMMDD%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)' that returns a String
+		*
+		* 	'TemplateEngine.ControlledUniqueId('string', 'boolean, 'integer')' --> 'String'
+		*
+		* 	Date/time placeholders are deterministic and ignore entropy.  Therefore 'UseTestCaseExecutionUuidForSeedEntropy' and 'ExtraEntropy' doesn't affect the result
+		*
+		*	-- Examples
+		*	- 'TemplateEngine.ControlledUniqueId("%YYYYMMDD%", true, 1)' --> "20260226"
+		*	- 'TemplateEngine.ControlledUniqueId("%YYYYMMDD%", false, 1)' --> "20260226"
+		*	- 'TemplateEngine.ControlledUniqueId("%YYYYMMDD%", true, 2)' --> "20260226"
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.ControlledUniqueId("%YYYYMMDD%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+		* SubTask: Add UnitTests for basic version;  'TemplateEngine.ControlledUniqueId("%YYMMDD%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)' that returns a String
+		*
+		* 	'TemplateEngine.ControlledUniqueId('string', 'boolean, 'integer')' --> 'String'
+		*
+		* 	Date/time placeholders are deterministic and ignore entropy.  Therefore 'UseTestCaseExecutionUuidForSeedEntropy' and 'ExtraEntropy' doesn't affect the result
+		*
+		*	-- Examples
+		*	- 'TemplateEngine.ControlledUniqueId("%YYMMDD%", true, 1)' --> "260226"
+		*	- 'TemplateEngine.ControlledUniqueId("%YYMMDD%", false, 1)' --> "260226"
+		*	- 'TemplateEngine.ControlledUniqueId("%YYMMDD%", true, 2)' --> "260226"
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.ControlledUniqueId("%YYMMDD%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+		* SubTask: Add UnitTests for basic version;  'TemplateEngine.ControlledUniqueId("%hh:mm:ss%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)' that returns a String
+		*
+		* 	'TemplateEngine.ControlledUniqueId('string', 'boolean, 'integer')' --> 'String'
+		*
+		* 	Date/time placeholders are deterministic and ignore entropy.  Therefore 'UseTestCaseExecutionUuidForSeedEntropy' and 'ExtraEntropy' doesn't affect the result
+		*
+		*	-- Examples
+		*	- 'TemplateEngine.ControlledUniqueId("%hh:mm:ss%", true, 1)' --> "08:23:59"
+		*	- 'TemplateEngine.ControlledUniqueId("%hh:mm:ss%", false, 1)' --> "08:23:59"
+		*	- 'TemplateEngine.ControlledUniqueId("%hh:mm:ss%", true, 2)' --> "08:23:59"
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.ControlledUniqueId("%hh:mm:ss%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+		* SubTask: Add UnitTests for basic version;  'TemplateEngine.ControlledUniqueId("%hh.mm.ss%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)' that returns a String
+		*
+		* 	'TemplateEngine.ControlledUniqueId('string', 'boolean, 'integer')' --> 'String'
+		*
+		* 	Date/time placeholders are deterministic and ignore entropy.  Therefore 'UseTestCaseExecutionUuidForSeedEntropy' and 'ExtraEntropy' doesn't affect the result
+		*
+		*	-- Examples
+		*	- 'TemplateEngine.ControlledUniqueId("%hh.mm.ss%", true, 1)' --> "08.23.59"
+		*	- 'TemplateEngine.ControlledUniqueId("%hh.mm.ss%", false, 1)' --> "08.23.59"
+		*	- 'TemplateEngine.ControlledUniqueId("%hh.mm.ss%", true, 2)' --> "08.23.59"
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.ControlledUniqueId("%hh.mm.ss%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+		* SubTask: Add UnitTests for basic version;  'TemplateEngine.ControlledUniqueId("%hhmmss%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)' that returns a String
+		*
+		*	'TemplateEngine.ControlledUniqueId('string', 'boolean, 'integer')' --> 'String'
+		*
+		* 	Date/time placeholders are deterministic and ignore entropy.  Therefore 'UseTestCaseExecutionUuidForSeedEntropy' and 'ExtraEntropy' doesn't affect the result
+		*
+		*	-- Examples
+		*	- 'TemplateEngine.ControlledUniqueId("%hhmmss%", true, 1)' --> "082359"
+		*	- 'TemplateEngine.ControlledUniqueId("%hhmmss%", false, 1)' --> "082359"
+		*	- 'TemplateEngine.ControlledUniqueId("%hhmmss%", true, 2)' --> "082359"
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.ControlledUniqueId("%hhmmss%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+		* SubTask: Add UnitTests for basic version;  'TemplateEngine.ControlledUniqueId("%hhmm%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)' that returns a String
+		*
+		*	'TemplateEngine.ControlledUniqueId('string', 'boolean, 'integer')' --> 'String'
+		*
+		* 	Date/time placeholders are deterministic and ignore entropy.  Therefore 'UseTestCaseExecutionUuidForSeedEntropy' and 'ExtraEntropy' doesn't affect the result
+		*
+		*	-- Examples
+		*	- 'TemplateEngine.ControlledUniqueId("%hhmm%", true, 1)' --> "0823"
+		*	- 'TemplateEngine.ControlledUniqueId("%hhmm%", false, 1)' --> "0823"
+		*	- 'TemplateEngine.ControlledUniqueId("%hhmm%", true, 2)' --> "0823"
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.ControlledUniqueId("%mmss%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+		* SubTask: Add UnitTests for basic version;  'TemplateEngine.ControlledUniqueId("%mmss%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)' that returns a String
+		*
+		*	'TemplateEngine.ControlledUniqueId('string', 'boolean, 'integer')' --> 'String'
+		*
+		* 	Date/time placeholders are deterministic and ignore entropy.  Therefore 'UseTestCaseExecutionUuidForSeedEntropy' and 'ExtraEntropy' doesn't affect the result
+		*
+		*	-- Examples
+		*	- 'TemplateEngine.ControlledUniqueId("%mmss%", true, 1)' --> "2359"
+		*	- 'TemplateEngine.ControlledUniqueId("%mmss%", false, 1)' --> "2359"
+		*	- 'TemplateEngine.ControlledUniqueId("%mmss%", true, 2)' --> "2359"
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.ControlledUniqueId("%hhmm%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+		* SubTask: Add UnitTests for any version of 'TemplateEngine.ControlledUniqueId that has a combination of 'Date' and 'Time' placeholders
+		*
+		*	'TemplateEngine.ControlledUniqueId('string', 'boolean, 'integer')' --> 'String'
+		*
+		* 	Date/time placeholders are deterministic and ignore entropy.  Therefore 'UseTestCaseExecutionUuidForSeedEntropy' and 'ExtraEntropy' doesn't affect the result
+		*
+		* 	Any of the following characters should be replaced in the input string
+		* 		YYYY --> Year, ie '2026'
+		* 		YY --> Year, ie '26'
+		* 		MM --> Month, ie '02'
+		* 		DD --> Day, ie '07'
+		* 		hh --> Hour, ie '09'
+		* 		mm --> Minutes, ie '03'
+		* 		ss --> seconds, ie '06'
+		* 		ms --> Milliseconds, ie '049'
+		* 		us --> Microseconds, ie '049208'
+		* 		ns --> Nanoseconds, ie '049208485'
+		*
+		*
+		*	-- Examples
+		*	- 'TemplateEngine.ControlledUniqueId("%Year: YYYY, Month: MM, Day: DD, Hour: hh, Minute: mm, Second: ss, Milliseconds: ms, Microseconds: us, Nanoseconds: ns%", true, 1)' --> "Year: 2026, Month: 02, Day: 27, Hour: 11, Minute: 04, Second: 09, Milliseconds: 049, Microseconds: 049208, Nanoseconds: 049208485"
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.ControlledUniqueId("%hhmm%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+		* SubTask: Add UnitTests for basic version;  'TemplateEngine.ControlledUniqueId("%n(n2)%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)' that returns a String
+		*
+		*	'TemplateEngine.ControlledUniqueId('string', 'boolean, 'integer')' --> 'String'
+		*
+		*	n is 'n'
+		*	n2 is an integer > 0 that represents the number of random digits (0-9)
+		*
+		*	'TemplateEngine.ControlledUniqueId' non Date/Time placeholders do use entropy.
+		*	Using the same entropy setup but with more number of digits will use the same base as the less number of digits, se below
+		*
+		* 	- Randomness for seed is created by the follow:
+		*	-  If 'UseTestCaseExecutionUuidForSeedEntropy' == true then
+		*	-  	seed = crc32.ChecksumIEEE([]byte(TestCaseExecutionUuid) +  ToString(ExtraEntropy)))
+		*	-  Else
+		*	-  	seed = crc32.ChecksumIEEE([]byte(ToString(ExtraEntropy)))
+		*	-  EndIf
+		*
+		*	'TemplateEngine.ControlledUniqueId' non Date/Time placeholders do use entropy
+		* 	Both 'UseTestCaseExecutionUuidForSeedEntropy' and 'ExtraEntropy' affects the result  for '%n(n2)%'
+		*
+		*	-- Examples
+		*	- 'TemplateEngine.ControlledUniqueId("%n(4)%", true, 1)' --> "0394"
+		*	- 'TemplateEngine.ControlledUniqueId("%n(5)%", true, 1)' --> "03941"
+		*	- 'TemplateEngine.ControlledUniqueId("%n(4)%", false, 1)' --> "3619"
+		*	- 'TemplateEngine.ControlledUniqueId("%n(4)%", true, 2)' --> "4692"
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.ControlledUniqueId("%n(n2)%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+		* SubTask: Add UnitTests for basic version;  'TemplateEngine.ControlledUniqueId("%a(n)%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)' that returns a String
+		*
+		* 	'TemplateEngine.ControlledUniqueId('string', 'boolean, 'integer')' --> 'String'
+		*
+		*	n is an integer > 0 that represents the number of random lower case character (a-z)
+		*	Using the same entropy setup but with more number of character will use the same base as the less number of characters, se below
+		*
+		*	'TemplateEngine.ControlledUniqueId' non Date/Time placeholders do use entropy
+		* 	Both 'UseTestCaseExecutionUuidForSeedEntropy' and 'ExtraEntropy' affects the result  for '%a(n)%'
+		*
+		* 	- Randomness for seed is created by the follow:
+		*	-  If 'UseTestCaseExecutionUuidForSeedEntropy' == true then
+		*	-  	seed = crc32.ChecksumIEEE([]byte(TestCaseExecutionUuid) +  ToString(ExtraEntropy)))
+		*	-  Else
+		*	-  	seed = crc32.ChecksumIEEE([]byte(ToString(ExtraEntropy)))
+		*	-  EndIf
+		*
+		*	-- Examples
+		*	- 'TemplateEngine.ControlledUniqueId("%a(4)%", true, 1)' --> "areh"
+		*	- 'TemplateEngine.ControlledUniqueId("%a(5)%", true, 1)' --> "areht"
+		*	- 'TemplateEngine.ControlledUniqueId("%a(4)%", false, 1)' --> "lgpw"
+		*	- 'TemplateEngine.ControlledUniqueId("%a(4)%", true, 2)' --> "qwsp"
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.ControlledUniqueId("%a(n)%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+		* SubTask: Add UnitTests for basic version;  'TemplateEngine.ControlledUniqueId("%A(n)%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)' that returns a String
+		*
+		* 	'TemplateEngine.ControlledUniqueId('string', 'boolean, 'integer')' --> 'String'
+		*
+		*	n is an integer > 0 that represents the number of random lower case character (A-Z)
+		*	Using the same entropy setup but with more number of character will use the same base as the less number of characters, se below
+		*
+		* 	'UseTestCaseExecutionUuidForSeedEntropy' and 'ExtraEntropy' affects the result  for '%A(n)%'
+		*
+		* 	- Randomness for seed is created by the follow:
+		*	-  If 'UseTestCaseExecutionUuidForSeedEntropy' == true then
+		*	-  	seed = crc32.ChecksumIEEE([]byte(TestCaseExecutionUuid) +  ToString(ExtraEntropy)))
+		*	-  Else
+		*	-  	seed = crc32.ChecksumIEEE([]byte(ToString(ExtraEntropy)))
+		*	-  EndIf
+		*
+		*	-- Examples
+		*	- 'TemplateEngine.ControlledUniqueId("%A(4)%", true, 1)' --> "AREH"
+		*	- 'TemplateEngine.ControlledUniqueId("%A(5)%", true, 1)' --> "AREHT"
+		*	- 'TemplateEngine.ControlledUniqueId("%A(4)%", false, 1)' --> "LGPW"
+		*	- 'TemplateEngine.ControlledUniqueId("%A(4)%", true, 2)' --> "QWSP"
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.ControlledUniqueId("%A(n)%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+		* SubTask: Add UnitTests for basic version;  'TemplateEngine.ControlledUniqueId("%aA(n)%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)' that returns a String
+		*
+		* 	'TemplateEngine.ControlledUniqueId('string', 'boolean, 'integer')' --> 'String'
+		*
+		*	n is an integer > 0 that represents the number of random lower case character (a-z, A-Z)
+		*	Using the same entropy setup but with more number of character will use the same base as the less number of characters, se below
+
+		*	'TemplateEngine.ControlledUniqueId' non Date/Time placeholders do use entropy
+		* 	Both 'UseTestCaseExecutionUuidForSeedEntropy' and 'ExtraEntropy' affects the result  for '%aA(n)%'
+		*
+		* 	- Randomness for seed is created by the follow:
+		*	-  If 'UseTestCaseExecutionUuidForSeedEntropy' == true then
+		*	-  	seed = crc32.ChecksumIEEE([]byte(TestCaseExecutionUuid) +  ToString(ExtraEntropy)))
+		*	-  Else
+		*	-  	seed = crc32.ChecksumIEEE([]byte(ToString(ExtraEntropy)))
+		*	-  EndIf
+		*
+		*	-- Examples
+		*	- 'TemplateEngine.ControlledUniqueId("%aA(4)%", true, 1)' --> "aReh"
+		*	- 'TemplateEngine.ControlledUniqueId("%aA(5)%", true, 1)' --> "aRehT"
+		*	- 'TemplateEngine.ControlledUniqueId("%aA(4)%", false, 1)' --> "LgpW"
+		*	- 'TemplateEngine.ControlledUniqueId("%aA(4)%", true, 2)' --> "qwSp"
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.ControlledUniqueId("%aA(n)%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+		* SubTask: Add UnitTests for basic version;  'TemplateEngine.ControlledUniqueId("%an(n2)%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)' that returns a String
+		*
+		* 	'TemplateEngine.ControlledUniqueId('string', 'boolean, 'integer')' --> 'String'
+		*
+		* 	an is 'an'
+		*	n2 is an integer > 0 that represents the number of random lower case characters or digits (a-z, 0-9)
+		*	Using the same entropy setup but with more number of character will use the same base as the less number of characters, se below. That also goes with the order of characters and digits
+		*
+		*	'TemplateEngine.ControlledUniqueId' non Date/Time placeholders do use entropy
+		* 	Both 'UseTestCaseExecutionUuidForSeedEntropy' and 'ExtraEntropy' affects the result  for '%an(n2)%'
+		*
+		* 	- Randomness for seed is created by the follow:
+		*	-  If 'UseTestCaseExecutionUuidForSeedEntropy' == true then
+		*	-  	seed = crc32.ChecksumIEEE([]byte(TestCaseExecutionUuid) +  ToString(ExtraEntropy)))
+		*	-  Else
+		*	-  	seed = crc32.ChecksumIEEE([]byte(ToString(ExtraEntropy)))
+		*	-  EndIf
+		*
+		*	-- Examples
+		*	- 'TemplateEngine.ControlledUniqueId("%an(4)%", true, 1)' --> "a3e5h"
+		*	- 'TemplateEngine.ControlledUniqueId("%an(5)%", true, 1)' --> "a3e5ht"
+		*	- 'TemplateEngine.ControlledUniqueId("%an(4)%", false, 1)' --> "1gp83"
+		*	- 'TemplateEngine.ControlledUniqueId("%an(4)%", true, 2)' --> "4wSp"
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.ControlledUniqueId("%an(n2)%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+		* SubTask: Add UnitTests for basic version;  'TemplateEngine.ControlledUniqueId("%An(n2)%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)' that returns a String
+		*
+		* 	'TemplateEngine.ControlledUniqueId('string', 'boolean, 'integer')' --> 'String'
+		*
+		* 	An is 'An'
+		*	n2 is an integer > 0 that represents the number of random upper case characters or digits (a-z, 0-9)
+		*	Using the same entropy setup but with more number of character will use the same base as the less number of characters, se below. That also goes with the order of characters and digits
+		*
+		*	'TemplateEngine.ControlledUniqueId' non Date/Time placeholders do use entropy
+		* 	Both 'UseTestCaseExecutionUuidForSeedEntropy' and 'ExtraEntropy' affects the result  for '%An(n2)%'
+		*
+		* 	- Randomness for seed is created by the follow:
+		*	-  If 'UseTestCaseExecutionUuidForSeedEntropy' == true then
+		*	-  	seed = crc32.ChecksumIEEE([]byte(TestCaseExecutionUuid) +  ToString(ExtraEntropy)))
+		*	-  Else
+		*	-  	seed = crc32.ChecksumIEEE([]byte(ToString(ExtraEntropy)))
+		*	-  EndIf
+		*
+		*	-- Examples
+		*	- 'TemplateEngine.ControlledUniqueId("%An(4)%", true, 1)' --> "A3E5H"
+		*	- 'TemplateEngine.ControlledUniqueId("%An(5)%", true, 1)' --> "A3E5HT"
+		*	- 'TemplateEngine.ControlledUniqueId("%An(4)%", false, 1)' --> "1GP83"
+		*	- 'TemplateEngine.ControlledUniqueId("%An(4)%", true, 2)' --> "4WSP"
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.ControlledUniqueId("%An(n2)%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+		* SubTask: Add UnitTests for basic version;  'TemplateEngine.ControlledUniqueId("%aAn(n2)%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)' that returns a String
+		*
+		* 	'TemplateEngine.ControlledUniqueId('string', 'boolean, 'integer')' --> 'String'
+		*
+		* 	aAn is 'aAn'
+		*	n2 is an integer > 0 that represents the number of random upper case characters or digits (a-z, A-Z or 0-9)
+		*	Using the same entropy setup but with more number of character will use the same base as the less number of characters, se below. That also goes with the order of characters and digits
+		*
+		*	'TemplateEngine.ControlledUniqueId' non Date/Time placeholders do use entropy
+		* 	Both 'UseTestCaseExecutionUuidForSeedEntropy' and 'ExtraEntropy' affects the result  for '%aAn(n2)%'
+		*
+		* 	- Randomness for seed is created by the follow:
+		*	-  If 'UseTestCaseExecutionUuidForSeedEntropy' == true then
+		*	-  	seed = crc32.ChecksumIEEE([]byte(TestCaseExecutionUuid) +  ToString(ExtraEntropy)))
+		*	-  Else
+		*	-  	seed = crc32.ChecksumIEEE([]byte(ToString(ExtraEntropy)))
+		*	-  EndIf
+		*
+		*	-- Examples
+		*	- 'TemplateEngine.ControlledUniqueId("%aAn(4)%", true, 1)' --> "a3E5h"
+		*	- 'TemplateEngine.ControlledUniqueId("%aAn(5)%", true, 1)' --> "a3E5hT"
+		*	- 'TemplateEngine.ControlledUniqueId("%aAn(4)%", false, 1)' --> "1gP83"
+		*	- 'TemplateEngine.ControlledUniqueId("%aAn(4)%", true, 2)' --> "4Wsp"
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.ControlledUniqueId("%aAn(n2)%", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+		* SubTask: Add UnitTests for fully mixed versions;  'TemplateEngine.ControlledUniqueId("Jonas \"ate\" %n(2)% pancakes during lunch %YYYY-MM-DD% which is %n(1)\% of calories needed.", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)' that returns a String
+		*
+		*	'TemplateEngine.ControlledUniqueId('string', 'boolean, 'integer')' --> 'String'
+		*
+		*	Escaped characters should taken care; ie. \" --> " and \% --> %
+		*
+		*	In mixed templates, date/time parts ignore entropy, but random parts use entropy
+		*
+		*	-- Example
+		*	-  'TemplateEngine.ControlledUniqueId("Jonas \"ate\" %n(2)% pancakes during lunch %YYYY-MM-DD% which is %n(1)\% of calories needed.", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy) --> 'Jonas "ate" 43 pancakes during lunch 2026-02-27 which is 7% of calories needed.'
+
+		* SubTask: Add functionality to support UnitTests for fully mixed versions;  'TemplateEngine.ControlledUniqueId("Jonas \"ate\" %n(2)% pancakes during lunch %YYYY-MM-DD% which is %n(1)\% of calories needed.", UseTestCaseExecutionUuidForSeedEntropy, ExtraEntropy)'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+	+ STORY: Add Support for Placeholder 'TemplateEngine.RandomPositiveDecimalValue(args[])'
+	+
+		* SubTask: Add UnitTests for basic versions; 'TemplateEngine.RandomPositiveDecimalValue[n](n, n, n, n, boolean, string)' that returns a String
+		*
+		*	-- Placeholder usage
+		*	-- 'TemplateEngine.RandomPositiveDecimalValue[ArraysIndex](IntegerPrecision , FractionPrecision , IntegerFieldWidth , FractionFieldWidth, UseTestCaseExecutionUuidForSeedEntropy, DecimalPointCharacter )'
+		*	-- 'TemplateEngine.RandomPositiveDecimalValue['Integer']('Integer', 'Integer'', 'Integer'', 'Integer', 'Boolean', 'string')' --> 'String'
+		*	-- 'TemplateEngine.RandomPositiveDecimalValue[@ArraysIndex='Integer'](@IntegerPrecision='Integer', @FractionPrecision='Integer', @IntegerFieldWidth='Integer'', @FractionFieldWidth='Integer'', @IntegerPrecision='Integer', @UseTestCaseExecutionUuidForSeedEntropy='Boolean', @DecimalPointCharacter='String')'
+		*
+		*	- 'IntegerSpace' and 'FractionSpace' define the spaces for 'Integerpart' and 'FractionPart'. Zeros will be added before 'Integerpart' and after 'FractionPart'
+		*	- If 'IntegerFieldWidth' is less than 'IntegerSize' then it will be ignored
+		*	- If 'FractionFieldWidth' is less than 'FractionSize' then it will be ignored
+		*
+		*	'TemplateEngine.RandomPositiveDecimalValue' placeholders do use entropy
+		* 	Both 'UseTestCaseExecutionUuidForSeedEntropy' and 'ArrayIndex' affects the result
+		*
+		*	- Randomness for seed is created by the follow:
+		*	-  If 'UseTestCaseExecutionUuidForSeedEntropy' == true then
+		*	-  	seed = crc32.ChecksumIEEE([]byte("PositiveDecimalValue" + TestCaseExecutionUuid +  ToString(Abs(ArraysIndex))))
+		*	-  Else
+		*	-  	seed = crc32.ChecksumIEEE([]byte("PositiveDecimalValue" +ToString(Abs(ArraysIndex))))
+		*	-  EndIf
+		*
+		*	- When IntegerPrecision och FractionPrecision increase then same base of digits are create, for the same entropy
+		*
+		*	-- Examples using different parameter values
+		*	- 'TemplateEngine.RandomPositiveDecimalValue[0](1, 2, 3, 4, true, ".")' can produce "004.5700"
+		*	- 'TemplateEngine.RandomPositiveDecimalValue[0](3, 2, 2, 1, true, ".")' can produce "344.54" or "002.70"
+		*	- 'TemplateEngine.RandomPositiveDecimalValue[0](0, 0, 2, 2, true, ".")' will produce "00.00"
+		*	- 'TemplateEngine.RandomPositiveDecimalValue[0](0, 0, 0, 0, true, ".")' will produce "0"
+		*	- 'TemplateEngine.RandomPositiveDecimalValue[0](0, 0, 1, 1, true, ".")' will produce "0.0"
+		*	- 'TemplateEngine.RandomPositiveDecimalValue[0](0, 0, 2, 3, true, ".")' will produce "00.000"
+		*	- 'TemplateEngine.RandomPositiveDecimalValue[0](1, 2, 1, 2, true, ".")'  can produce "5.48"
+		*	- 'TemplateEngine.RandomPositiveDecimalValue[2](2, 2, 2, 2, true, ".")' can produce"28.87"
+		*	- 'TemplateEngine.RandomPositiveDecimalValue[3](0, 2, 1, 2, true, ".")' can produce"0.37"
+		*	- 'TemplateEngine.RandomPositiveDecimalValue[4](3, 0, 3, 0, true, ".")' can produce "293"
+		*	- 'TemplateEngine.RandomPositiveDecimalValue[4](3, 0, 3, 2, true, ".")' can produce "293.00"
+		*
+		*	-- Examples using different ArraysIndex- and parameter values
+		*	- Index 5
+		*	- 'TemplateEngine.RandomPositiveDecimalValue[5](3, 2, 3, 2, true, ".")' can produce "344.56"
+		*	- 'TemplateEngine.RandomPositiveDecimalValue[5](2, 2, 2, 2, true, ".")' can produce "44.56"
+		*	- 'TemplateEngine.RandomPositiveDecimalValue[5](1,1, 1, 1, true, ".")' can produce "4.5"
+		*	- 'TemplateEngine.RandomPositiveDecimalValue[5](1,1, 2, 2, true, ".")' can produce "04.50"
+		*	- 'TemplateEngine.RandomPositiveDecimalValue[5](3, 2, 2, 1, true, ".")' can produce "344.54"
+		*	- Index 6
+		*	-- 'TemplateEngine.RandomPositiveDecimalValue[6](3, 2, 3, 2, true, ".")' can produce "489.03"
+		*
+		*	- Index 6 and other DecimalPointCharacter
+		*	-- 'TemplateEngine.RandomPositiveDecimalValue[6](3, 2, 3, 2, true, ",")' can produce "489,03"
+		*	-- 'TemplateEngine.RandomPositiveDecimalValue[6](3, 2, 3, 2, true, "&")' can produce "489&03"
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.RandomPositiveDecimalValue'
+
+	++++++++++++++++++++++++++++++++++++++++++++++
+
+	+ STORY: Add Support for Placeholder 'TemplateEngine.RandomPositiveDecimalValue.Sum(args[])'
+	+
+		* SubTask: Add UnitTests for basic versions; 'TemplateEngine.RandomPositiveDecimalValue.Sum['[]n'](n, n, n, n, boolean, string)' that returns a String
+		*
+		*
+		*	-- Placeholder usage
+		*	-- 'TemplateEngine.RandomPositiveDecimalValue.Sum[ArraysIndexesToSum](IntegerPrecision , FractionPrecision , IntegerFieldWidth , FractionFieldWidth, UseTestCaseExecutionUuidForSeedEntropy, DecimalPointCharacter)'that returns a String
+		*	-- 'TemplateEngine.RandomPositiveDecimalValue['Integer', 'Integer', ...]('Integer', 'Integer'', 'Integer'', 'Integer', 'Boolean', 'String')' --> 'String'
+		*	-- 'TemplateEngine.RandomPositiveDecimalValue[@ArraysIndexesToSum='Integer', 'Integer'...](@FractionPrecision='Integer', @IntegerFieldWidth='Integer'', @FractionFieldWidth='Integer'', @IntegerPrecision='Integer', @UseTestCaseExecutionUuidentropy='Boolean', @DecimalPointCharacter='String')'
+		*	-
+		*	- Example for @ArraysIndexesToAdd; [2, 3] -> Add values from Index 2 and Index 3; So if "Index 2 = 4.3" and "Index 3 =7.2" the the value to format is "11.5"
+		*	- Example for @ArraysIndexesToAdd; [2, -3] -> Add values from Index 2 and Index 3 when the value of Index 3 will be the negative value of Index 3; So if "Index 2 = 4.3" and "Index 3 =7.2" the the value to format is "-2.9"
+		*
+		*	'TemplateEngine.RandomPositiveDecimalValue.Sum' placeholders do use entropy
+		* 	Both 'UseTestCaseExecutionUuidForSeedEntropy' and 'ArrayIndex' affects the result
+		*
+		*	- The process is
+		*	- 	Create and format each value referenced with ArrayIndices based on the rule-set [IntegerPrecision , FractionPrecision , IntegerFieldWidth , FractionFieldWidth]
+		*	- 	Do the sum, a negative index number counts as a negative number for that positive index number.
+		*	- 	Format the result based on the rule-set [IntegerPrecision , FractionPrecision , IntegerFieldWidth , FractionFieldWidth]
+		*	-
+		*
+		*	-- Randomness for seed is created by the follow:
+		*	-  If 'UseTestCaseExecutionUuidForSeedEntropy' == true then
+		*	-  	seed = crc32.ChecksumIEEE([]byte("PositiveDecimalValue" + TestCaseExecutionUuid +  ToString(Abs(ArraysIndex))))
+		*	-  Else
+		*	-  	seed = crc32.ChecksumIEEE([]byte("PositiveDecimalValue" +ToString(Abs(ArraysIndex))))
+		*	-  EndIf
+		*	-
+		*	- Having this
+		*	-- 'TemplateEngine.RandomPositiveDecimalValue[0](3, 2, 3, 2, true, ".")' can produce "344.54"
+		*	-- 'TemplateEngine.RandomPositiveDecimalValue[1](3, 2, 3, 2, true, ".")' can produce "489.03"
+		*	- Gives this
+		*	-- 'TemplateEngine.RandomPositiveDecimalValue.Sum[0, 1](3, 2, 3, 2, true, ".") will then produce '344.54' + '489.03' = '833.57'
+		*	-- 'TemplateEngine.RandomPositiveDecimalValue.Sum[0, 1](3, 2, 3, 4, true, ".") will then produce '344.54' + '489.03' = '0833.5700'
+		*	-
+		*	- The values in the arrays are always calculated and format each time the Sum-function is used. Nothing is saved in memory for later use
+		*	-
+		*	- DecimalPointCharacter is something that is added when the result is produced for the "return-string" for the function
+
+		* SubTask: Add functionality to support UnitTests for 'TemplateEngine.RandomPositiveDecimalValue.Sum'
+
+	++++++++++++++++++++++++++++++++++++++++++++++

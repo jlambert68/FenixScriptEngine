@@ -1,28 +1,17 @@
 # Placeholder Attributes
 
-This file lists user-entered parameters supported by each placeholder function in `scriptEngine`.
+This file lists accepted user parameters and validation behavior for each supported placeholder.
 
-## Jira Story Mapping
+## Function Contracts
 
-The current placeholder set maps to the stories in `docs/Jira Epics, Stories and Subtasks.txt`:
-
-| Jira Story | Runtime Placeholder | Go File |
-|---|---|---|
-| `TemplateEngine.TodayShiftDay(arg)` | `Fenix.TodayShiftDay` | `go_placeholder_fenix_today_shift_day.go` |
-| `TemplateEngine.ControlledUniqueId(args[])` | `Fenix.ControlledUniqueId` | `go_placeholder_fenix_controlled_unique_id.go` |
-| `TemplateEngine.RandomPositiveDecimalValue(args[])` | `Fenix.RandomPositiveDecimalValue` | `go_placeholder_fenix_random_positive_decimal_value.go` |
-| `TemplateEngine.RandomPositiveDecimalValue.Sum(args[])` | `Fenix.RandomPositiveDecimalValue.Sum` | `go_placeholder_fenix_random_positive_decimal_value_sum.go` |
-
-## Function Parameters
-
-| Function | Array Index Part `[ ... ]` | Function Arguments `( ... )` | Entropy Tail `(useEntropy, extraEntropy)` |
+| Function | Array Index Part `[ ... ]` | Function Arguments `( ... )` | Validation Summary |
 |---|---|---|---|
-| `Fenix.TodayShiftDay` | Not supported (must be empty) | Exactly one integer: `(shiftDays)` | Parsed by dispatcher, not used by function behavior |
-| `Fenix.ControlledUniqueId` | `[]` or `[index]` where `index` is an integer | Exactly three arguments: `(textToProcess, useEntropyFromExecutionUUID, extraEntropy)` | Parsed by dispatcher; Jira entropy values are passed as function arguments |
-| `Fenix.RandomPositiveDecimalValue` | `[]` or `[index]` where `index` is an integer | Exactly five arguments: `(IntegerPrecision, FractionPrecision, IntegerFieldWidth, FractionFieldWidth, DecimalPointCharacter)` | Optional and used by dispatcher entropy calculation |
-| `Fenix.RandomPositiveDecimalValue.Sum` | `[i1,i2,...]` integers (can be negative). Empty means default `[1]` | Exactly five arguments: `(IntegerPrecision, FractionPrecision, IntegerFieldWidth, FractionFieldWidth, DecimalPointCharacter)` | Optional and used by dispatcher entropy calculation |
+| `Fenix.TodayShiftDay` | Not allowed | Exactly one integer: `(shiftDays)` | Fails when array index exists, when arg count != 1, or argument is not integer |
+| `Fenix.ControlledUniqueId` | Optional single integer index; default `1` | Exactly three args: `(textToProcess, useEntropyFromExecutionUUID, extraEntropy)` | Fails when more than one array index, wrong arg count, invalid boolean, invalid integer |
+| `Fenix.RandomPositiveDecimalValue` | Optional single integer index; default `1` | Exactly five args: `(IntegerPrecision, FractionPrecision, IntegerFieldWidth, FractionFieldWidth, DecimalPointCharacter)` | Fails when more than one index, arg count != 5, non-integer among first four args, empty/multi-char decimal point |
+| `Fenix.RandomPositiveDecimalValue.Sum` | One or more integers; negatives subtract; default `[1]` | Exactly same five args as value variant | Fails on invalid argument count/type/decimal-point character |
 
-## ControlledUniqueId Token Set (Jira Format)
+## ControlledUniqueId Token Set
 
 Date/time tokens:
 
@@ -38,7 +27,7 @@ Date/time tokens:
 - `%us%`
 - `%ns%`
 
-Random tokens:
+Random Jira tokens:
 
 - `%n(length)%`
 - `%a(length)%`
@@ -48,68 +37,51 @@ Random tokens:
 - `%An(length)%`
 - `%aAn(length)%`
 
-## TestData Placeholder
+Legacy random token forms are treated as unsupported and remain unchanged.
 
-| Placeholder Type | Format | User-entered part |
-|---|---|---|
-| TestData lookup | `{{TestData.AnyPrefix.ColumnDataName}}` | `ColumnDataName` (final segment) |
+## Entropy Inputs
 
-## Input Constraints
+Two entropy paths exist in current implementation:
 
-- `DecimalPointCharacter` must be exactly one character.
-- `Fenix.ControlledUniqueId` requires exactly three function arguments.
-- `Fenix.RandomPositiveDecimalValue` requires exactly five function arguments.
-- `Fenix.RandomPositiveDecimalValue.Sum` requires exactly five function arguments.
-- Function names in template syntax use dots (`Fenix.X`) and are mapped internally to underscore names (`Fenix_X`).
+1. Dispatcher entropy (`GoPlaceholderInput.Entropy`)
+- Used by random decimal placeholders.
+- Derived from optional trailing tail `(useEntropy, extraEntropy)`.
 
-## Entropy Calculation (Dispatcher)
+2. ControlledUniqueId internal entropy
+- ControlledUniqueId computes entropy from its own function args (`useEntropyFromExecutionUUID`, `extraEntropy`) plus execution UUID.
+
+Dispatcher entropy formula:
 
 ```text
-Entropy = extraEntropy
+entropy = extraEntropy
 if useEntropyFromExecutionUUID == true {
-  Entropy = crc32(testCaseExecutionUUID) + extraEntropy
+  entropy = crc32(testCaseExecutionUUID) + extraEntropy
 }
 ```
 
-- If entropy tail is omitted, defaults are `useEntropyFromExecutionUUID=true` and `extraEntropy=0`.
-- `{{...}(false, N)}` gives `Entropy = N`.
-- `{{...}(false)}` gives `Entropy = 0`.
+## Parser Constraints
 
-## Attribute Examples
+From `placeholderReplacementEngine.match(...)`:
 
-### `Fenix.TodayShiftDay`
+- Function arguments are split on commas.
+- No escape/quote handling for commas inside a single argument.
+- Template examples that include commas inside one argument are not parser-safe.
+
+## Example Calls
 
 ```text
 {{Fenix.TodayShiftDay(0)}}
-{{Fenix.TodayShiftDay(-1)}}
-{{Fenix.TodayShiftDay(10)}}
-```
-
-### `Fenix.ControlledUniqueId`
-
-```text
-{{Fenix.ControlledUniqueId(%YYYY-MM-DD%, true, 0)}}
-{{Fenix.ControlledUniqueId[2](ID-%n(5)%-%a(4)%-%A(4)%, true, 5)}}
-{{Fenix.ControlledUniqueId(%Year: YYYY, Month: MM, Day: DD%, false, 1)}}
-```
-
-### `Fenix.RandomPositiveDecimalValue`
-
-```text
+{{Fenix.ControlledUniqueId(%YYYYMMDD%, true, 1)}}
+{{Fenix.ControlledUniqueId[2](ID-%n(4)%-%A(4)%, false, 1)}}
 {{Fenix.RandomPositiveDecimalValue(2, 3, 2, 3, ".")}}
-{{Fenix.RandomPositiveDecimalValue[2](2, 3, 2, 3, ".")}}
-{{Fenix.RandomPositiveDecimalValue(2, 3, 4, 4, ",")}}
-```
-
-### `Fenix.RandomPositiveDecimalValue.Sum`
-
-```text
-{{Fenix.RandomPositiveDecimalValue.Sum[1](2, 3, 2, 3, ".")}}
 {{Fenix.RandomPositiveDecimalValue.Sum[-1,2](2, 3, 3, 3, ".")}}
-{{Fenix.RandomPositiveDecimalValue.Sum[1,2](2, 3, 4, 4, ",")}}
 ```
 
-Notes:
+## TestData Placeholder
 
-- Sample values depend on current date/time, array index, execution UUID, and entropy.
-- Legacy non-Jira random token forms are not supported.
+`ParseAndFormatPlaceholders(...)` recognizes:
+
+- `TestData.Context.Column`
+- `Context.TestData.Column` (legacy)
+
+Malformed `TestData` references are returned as a readable error string in output text.

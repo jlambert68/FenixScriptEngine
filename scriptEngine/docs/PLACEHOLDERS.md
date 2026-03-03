@@ -1,10 +1,8 @@
 # ScriptEngine Placeholder Functions
 
-This document describes the placeholders currently supported by `scriptEngine` and how to use them in templates.
+This document describes placeholders currently supported in the Go-first ScriptEngine path.
 
-## Jira Story Mapping And Go File Layout
-
-The placeholders come from `docs/Jira Epics, Stories and Subtasks.txt` and are implemented with one placeholder function per Go file:
+## Implementation Mapping
 
 | Jira Story | Runtime Placeholder | Go Function | Go File |
 |---|---|---|---|
@@ -13,60 +11,68 @@ The placeholders come from `docs/Jira Epics, Stories and Subtasks.txt` and are i
 | `TemplateEngine.RandomPositiveDecimalValue(args[])` | `Fenix.RandomPositiveDecimalValue` | `goFenixRandomPositiveDecimalValue` | `go_placeholder_fenix_random_positive_decimal_value.go` |
 | `TemplateEngine.RandomPositiveDecimalValue.Sum(args[])` | `Fenix.RandomPositiveDecimalValue.Sum` | `goFenixRandomPositiveDecimalValueSum` | `go_placeholder_fenix_random_positive_decimal_value_sum.go` |
 
-Supporting/shared code:
+Shared files:
 
-- `go_placeholder_registration.go` registers all placeholder handlers.
-- `go_placeholder_time_provider.go` defines the injectable time source for deterministic tests.
-- `go_placeholder_fenix_random_positive_decimal_helpers.go` contains shared decimal helper logic used by value and sum variants.
+- `go_placeholder_dispatcher.go`
+- `go_placeholder_registration.go`
+- `go_placeholder_time_provider.go`
+- `go_placeholder_fenix_random_positive_decimal_helpers.go`
 
-## Placeholder Syntax
+## Execution Flow
 
-General format:
+1. Placeholder text is parsed in `placeholderReplacementEngine.match(...)`.
+2. Parsed input becomes `[placeholder, functionName, arrayIndexes, arguments, useEntropy, extraEntropy]`.
+3. Go handler dispatch is attempted first (`executeGoPlaceholderFunction(...)`).
+4. If no Go handler exists, legacy Lua execution is used.
+
+## Syntax And Parser Constraints
+
+General syntax:
 
 ```text
 {{Function.Name[optionalArrayIndexes](arg1, arg2, ...)}(useEntropyFromTestCaseExecutionUuid, extraEntropy)}
 ```
 
-Notes:
+Constraints from the current parser implementation:
 
-- Dots in function names are converted to underscores internally.
-- Entropy tail values are parsed by the shared dispatcher.
-- For `Fenix.ControlledUniqueId`, Jira uses three function arguments: `(text, useEntropyFromTestCaseExecutionUuid, extraEntropy)`.
+- Function arguments are split on commas.
+- No quoting/escaping support for commas inside one argument.
+- Dot notation in function names is normalized to underscore names internally.
 
 ## Supported Functions
 
 ### 1) `Fenix.TodayShiftDay`
 
-Description:
+Contract:
 
-- Returns today's date shifted by a number of days.
-- Format: `YYYY-MM-DD`.
-
-Arguments:
-
-- Exactly one integer argument: shift days.
+- Exactly one integer argument: `(shiftDays)`.
+- Array indexes are not supported.
+- Output format is `YYYY-MM-DD` in local time.
 
 Examples:
 
 ```text
 {{Fenix.TodayShiftDay(0)}}
 {{Fenix.TodayShiftDay(-1)}}
-{{Fenix.TodayShiftDay(10)}}
+{{Fenix.TodayShiftDay(1)}}
 ```
 
 ### 2) `Fenix.ControlledUniqueId`
 
-Description:
+Contract:
 
-- Replaces supported date/time/random tokens in an input string.
-- Deterministic output based on array index plus entropy.
-
-Arguments:
-
-- Exactly three arguments:
-  - `textToProcess` (string)
-  - `useEntropyFromTestCaseExecutionUuid` (`true`/`false`)
+- Exactly three function arguments:
+  - `textToProcess`
+  - `useEntropyFromExecutionUUID` (`true`/`false`)
   - `extraEntropy` (integer)
+- Optional array index: default `1`, max one index.
+
+Important behavior:
+
+- Date/time tokens are replaced using local current time.
+- Random Jira tokens are deterministic from array index + entropy.
+- Legacy non-Jira random formats are not replaced.
+- Entropy for this function is derived from function arguments 2 and 3.
 
 Supported date/time tokens:
 
@@ -92,33 +98,31 @@ Supported random Jira tokens:
 - `%An(length)%`
 - `%aAn(length)%`
 
-Examples:
+Examples (parser-safe, no comma inside first argument):
 
 ```text
 {{Fenix.ControlledUniqueId(%YYYY-MM-DD%, true, 0)}}
 {{Fenix.ControlledUniqueId[2](ID-%n(5)%-%a(4)%-%A(4)%, true, 5)}}
-{{Fenix.ControlledUniqueId(%Year: YYYY, Month: MM, Day: DD%, false, 1)}}
+{{Fenix.ControlledUniqueId(Year=YYYY-Month=MM-Day=DD, false, 1)}}
 ```
 
 ### 3) `Fenix.RandomPositiveDecimalValue`
 
-Description:
+Contract:
 
-- Generates a deterministic positive decimal value.
-
-Arguments:
-
-- Exactly five arguments:
+- Optional single array index, default `1`.
+- Exactly five function arguments:
   - `IntegerPrecision`
   - `FractionPrecision`
   - `IntegerFieldWidth`
   - `FractionFieldWidth`
-  - `DecimalPointCharacter`
+  - `DecimalPointCharacter` (single character)
 
-Array index:
+Behavior:
 
-- Optional single array index.
-- If omitted, index `1` is used.
+- Deterministic random generation using array index + dispatcher entropy.
+- Integer and fraction padding applied from field widths.
+- Decimal separator replaced with `DecimalPointCharacter`.
 
 Examples:
 
@@ -130,19 +134,18 @@ Examples:
 
 ### 4) `Fenix.RandomPositiveDecimalValue.Sum`
 
-Description:
+Contract:
 
-- Generates values for each provided array index and sums/subtracts them.
-- Positive index adds value, negative index subtracts value.
+- Array index list supports one or more integers; negatives subtract.
+- Default index list is `[1]` when empty.
+- Exactly same five function arguments as `Fenix.RandomPositiveDecimalValue`.
 
-Arguments:
+Behavior:
 
-- Exactly the same five arguments as `Fenix.RandomPositiveDecimalValue`.
-
-Array indexes:
-
-- One or more indexes are supported.
-- If omitted, `[1]` is used.
+- Generates per-index deterministic values.
+- Positive indexes add, negative indexes subtract.
+- Applies same padding and decimal-point replacement as value variant.
+- Negative sum formatting keeps leading zeros (example test expectation: `-044.613`).
 
 Examples:
 
@@ -152,33 +155,29 @@ Examples:
 {{Fenix.RandomPositiveDecimalValue.Sum[1,2](2, 3, 4, 4, ",")}}
 ```
 
-## TestData Placeholder
+## TestData Placeholder Handling
 
-Description:
+`ParseAndFormatPlaceholders(...)` supports:
 
-- Pulls values from `testDataPointValues` map in `placeholderReplacementEngine`.
+- Preferred: `{{TestData.Context.ColumnName}}`
+- Legacy: `{{Context.TestData.ColumnName}}`
 
-Format:
+Lookup key is always the final segment (`ColumnName`).
 
-```text
-{{TestData.AnyPrefix.ColumnDataName}}
-```
+## Validation Coverage
 
-The final segment is used as map key (for example `TestData.Customer.FirstName` uses key `FirstName`).
+Validation and deterministic behavior are covered in:
 
-## Template Example
+- `scriptEngine/go_placeholder_dispatcher_test.go`
+- `scriptEngine/go_placeholder_fenix_today_shift_day_test.go`
+- `scriptEngine/go_placeholder_fenix_controlled_unique_id_test.go`
+- `scriptEngine/go_placeholder_fenix_random_positive_decimal_value_test.go`
+- `scriptEngine/go_placeholder_fenix_random_positive_decimal_value_sum_test.go`
+- `placeholderReplacementEngine/placeholderReplacementEngine_test.go`
 
-```text
-Hello {{TestData.Customer.FirstName}} {{TestData.Customer.LastName}},
+## Per-Placeholder Example Files
 
-RunDate: {{Fenix.TodayShiftDay(0)}}
-CorrelationId: {{Fenix.ControlledUniqueId(CORR-%YYYYMMDD%-%n(4)%-%A(4)%, true, 0)}}
-Price: {{Fenix.RandomPositiveDecimalValue(2, 2, 3, 2, ".")}}
-Net: {{Fenix.RandomPositiveDecimalValue.Sum[1,-2,3](2, 2, 4, 2, ".")}}
-```
-
-Notes:
-
-- Date/time-based results change with current local time.
-- Random-related placeholders are deterministic for the same input plus execution UUID and entropy values.
-- `Fenix.ControlledUniqueId` uses Jira token formats only.
+- `Fenix_TodayShiftDay_Examples.md`
+- `Fenix_ControlledUniqueId_Examples.md`
+- `Fenix_RandomPositiveDecimalValue_Examples.md`
+- `Fenix_RandomPositiveDecimalValue_Sum_Examples.md`

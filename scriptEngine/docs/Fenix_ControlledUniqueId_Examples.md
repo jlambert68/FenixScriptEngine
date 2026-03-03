@@ -1,74 +1,97 @@
-# Fenix_ControlledUniqueId - Supported Replacements and Processing
+# Fenix.ControlledUniqueId - Runtime Behavior
 
-This file summarizes current Jira-style token support for `Fenix.ControlledUniqueId`.
+This document describes the current Go implementation in `go_placeholder_fenix_controlled_unique_id.go`.
 
-## Function Signature
+## Signature
 
-`Fenix.ControlledUniqueId` expects exactly three function arguments:
+`Fenix.ControlledUniqueId` requires exactly three function arguments:
 
-1. `textToProcess` (string)
+1. `textToProcess`
 2. `useEntropyFromExecutionUUID` (`true`/`false`)
 3. `extraEntropy` (integer)
 
-Examples:
+Optional array index:
+
+- No index -> default index `1`
+- One index is allowed
+- More than one index returns validation error
+
+## Deterministic Entropy
+
+Entropy is calculated inside this function from argument 2 and 3:
+
+```text
+entropy = extraEntropy
+if useEntropyFromExecutionUUID == true {
+  entropy = crc32(testCaseExecutionUUID) + extraEntropy
+}
+seedBase = arrayIndex + entropy
+```
+
+## Supported Token Replacements
+
+Date/time tokens:
+
+- `%YYYY-MM-DD%`
+- `%YYYYMMDD%`
+- `%YYMMDD%`
+- `%hh:mm:ss%`
+- `%hh.mm.ss%`
+- `%hhmmss%`
+- `%hhmm%`
+- `%mmss%`
+- `%ms%`
+- `%us%`
+- `%ns%`
+
+Component replacements inside mixed strings:
+
+- `YYYY`, `YY`, `MM`, `DD`, `hh`, `mm`, `ss`, `ms`, `us`, `ns`
+
+Random Jira tokens:
+
+- `%n(length)%`
+- `%a(length)%`
+- `%A(length)%`
+- `%aA(length)%`
+- `%an(length)%`
+- `%An(length)%`
+- `%aAn(length)%`
+
+Legacy random formats are not replaced and remain unchanged.
+
+## Parser-Safe Examples
+
+These examples avoid commas inside the first argument:
 
 ```text
 {{Fenix.ControlledUniqueId(%YYYY-MM-DD%, true, 0)}}
 {{Fenix.ControlledUniqueId(%n(5)%-%a(5)%-%A(5)%, true, 5)}}
-{{Fenix.ControlledUniqueId(%Year: YYYY, Month: MM, Day: DD%, false, 1)}}
+{{Fenix.ControlledUniqueId(Year=YYYY-Month=MM-Day=DD, false, 1)}}
+{{Fenix.ControlledUniqueId[2](ID-%aAn(4)%, true, 0)}}
 ```
 
-## Supported Replacements
+## Validation Errors
 
-Date/time token replacements:
+Common failures:
 
-| Token | Replacement format |
-|---|---|
-| `%YYYY-MM-DD%` | Current date (`YYYY-MM-DD`) |
-| `%YYYYMMDD%` | Current date (`YYYYMMDD`) |
-| `%YYMMDD%` | Current date (`YYMMDD`) |
-| `%hh:mm:ss%` | Current time (`HH:MM:SS`) |
-| `%hh.mm.ss%` | Current time (`HH.MM.SS`) |
-| `%hhmmss%` | Current time (`HHMMSS`) |
-| `%hhmm%` | Current time (`HHMM`) |
-| `%mmss%` | Current time (`MMSS`) |
-| `%ms%` | Milliseconds (`000-999`) |
-| `%us%` | Microseconds (`000000-999999`) |
-| `%ns%` | Nanoseconds (`000000000-999999999`) |
+- More than one array index.
+- Missing arguments (`len != 3`).
+- Argument 2 is not boolean.
+- Argument 3 is not integer.
 
-Random Jira token replacements:
+## Unit Test Coverage
 
-| Token | Character set |
-|---|---|
-| `%n(length)%` | digits (`0-9`) |
-| `%a(length)%` | lowercase letters (`a-z`) |
-| `%A(length)%` | uppercase letters (`A-Z`) |
-| `%aA(length)%` | mixed letters (`a-zA-Z`) |
-| `%an(length)%` | lowercase alphanumeric (`a-z0-9`) |
-| `%An(length)%` | uppercase alphanumeric (`A-Z0-9`) |
-| `%aAn(length)%` | mixed alphanumeric (`a-zA-Z0-9`) |
+`go_placeholder_fenix_controlled_unique_id_test.go` verifies:
 
-## Processing Behavior
+- Date/time token replacement.
+- Jira random token patterns.
+- Determinism for repeated calls.
+- Entropy effect differences (`true/false`, `extraEntropy` changes).
+- Unsupported legacy token behavior.
+- Input validation and error messages.
 
-- If array index is omitted, default index `1` is used.
-- At most one array index is allowed.
-- Output is deterministic for the same `textToProcess`, array index, execution UUID, and entropy values.
+All test calls log input matrix and execution result via:
 
-## Full Example
-
-Input:
-
-```text
-{{Fenix.ControlledUniqueId(Date=%YYYY-MM-DD%, Compact=%hhmmss%, Rand=%n(5)%, Mix=%aAn(4)%, true, 0)}}
-```
-
-Possible output shape:
-
-```text
-Date=2026-03-02, Compact=153045, Rand=79410, Mix=g7Qx
-```
-
-## Notes
-
-- Jira token formats are the supported random formats.
-- Legacy non-Jira random formats are not supported.
+- `logPlaceholderInputMatrix(...)`
+- `logPlaceholderExecutionResult(...)`

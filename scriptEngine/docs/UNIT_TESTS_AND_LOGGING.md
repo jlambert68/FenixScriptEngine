@@ -100,6 +100,20 @@ Defines shared helpers used by placeholder tests:
 - `logPlaceholderInputMatrix(...)`
 - `logPlaceholderExecutionResult(...)`
 
+### HappyLuaTime (Lua Placeholder)
+
+File: `scriptEngine/lua_happy_lua_time_test.go`
+
+Covers:
+
+- Lua engine initialization for embedded scripts.
+- Execution of `{{HappyLuaTime()}}`.
+- Output format: `My name is Lua and the time is HH:MM:SS`.
+
+Logging:
+
+- Input and output are logged with `t.Logf(...)`.
+
 ## PlaceholderReplacementEngine Tests
 
 File: `placeholderReplacementEngine/placeholderReplacementEngine_test.go`

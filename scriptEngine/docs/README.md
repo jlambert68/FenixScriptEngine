@@ -28,7 +28,10 @@ This folder contains placeholder documentation for the Go-first ScriptEngine imp
 7. `Fenix_RandomPositiveDecimalValue_Sum_Examples.md`
 - Examples for `Fenix.RandomPositiveDecimalValue.Sum`.
 
-8. `UNIT_TESTS_AND_LOGGING.md`
+8. `HappyLuaTime_Examples.md`
+- Examples for the Lua placeholder `HappyLuaTime`.
+
+9. `UNIT_TESTS_AND_LOGGING.md`
 - Test coverage map for all Go unit tests.
 - Documents the input/output logging format used in tests.
 

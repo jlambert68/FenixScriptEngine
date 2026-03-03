@@ -10,6 +10,7 @@ This file lists accepted user parameters and validation behavior for each suppor
 | `Fenix.ControlledUniqueId` | Optional single integer index; default `1` | Exactly three args: `(textToProcess, useEntropyFromExecutionUUID, extraEntropy)` | Fails when more than one array index, wrong arg count, invalid boolean, invalid integer |
 | `Fenix.RandomPositiveDecimalValue` | Optional single integer index; default `1` | Exactly five args: `(IntegerPrecision, FractionPrecision, IntegerFieldWidth, FractionFieldWidth, DecimalPointCharacter)` | Fails when more than one index, arg count != 5, non-integer among first four args, empty/multi-char decimal point |
 | `Fenix.RandomPositiveDecimalValue.Sum` | One or more integers; negatives subtract; default `[1]` | Exactly same five args as value variant | Fails on invalid argument count/type/decimal-point character |
+| `HappyLuaTime` | Not allowed | No arguments: `()` | Fails when array index or arguments are provided |
 
 ## ControlledUniqueId Token Set
 
@@ -75,6 +76,7 @@ From `placeholderReplacementEngine.match(...)`:
 {{Fenix.ControlledUniqueId[2](ID-%n(4)%-%A(4)%, false, 1)}}
 {{Fenix.RandomPositiveDecimalValue(2, 3, 2, 3, ".")}}
 {{Fenix.RandomPositiveDecimalValue.Sum[-1,2](2, 3, 3, 3, ".")}}
+{{HappyLuaTime()}}
 ```
 
 ## TestData Placeholder

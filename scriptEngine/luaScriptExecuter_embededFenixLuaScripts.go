@@ -18,6 +18,9 @@ var fenix_RandomPositiveDecimalValue []byte
 //go:embed src/Fenix_TodayDateShift.lua
 var fenix_TodayDateShift []byte
 
+//go:embed luaFunctions/HappyLuaTime.lua
+var happyLuaTime []byte
+
 type LuaScriptsStruct struct {
 	// Logical name used when loading into Lua state.
 	LuaScriptName string
@@ -32,6 +35,7 @@ func loadFenixLuaScripts() (fenixLuaScripts []LuaScriptsStruct) {
 	fenixLuaScripts = append(fenixLuaScripts, LuaScriptsStruct{"fenix_ControlledUniqueId", fenix_ControlledUniqueId})
 	fenixLuaScripts = append(fenixLuaScripts, LuaScriptsStruct{"fenix_RandomPositiveDecimalValue", fenix_RandomPositiveDecimalValue})
 	fenixLuaScripts = append(fenixLuaScripts, LuaScriptsStruct{"fenix_TodayDateShift", fenix_TodayDateShift})
+	fenixLuaScripts = append(fenixLuaScripts, LuaScriptsStruct{"happyLuaTime", happyLuaTime})
 
 	return fenixLuaScripts
 }

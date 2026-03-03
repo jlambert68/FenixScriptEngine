@@ -38,6 +38,7 @@ func runPlaceholderExamples() {
 	examples = append(examples, examplesFromControlledUniqueID()...)
 	examples = append(examples, examplesFromRandomPositiveDecimalValue()...)
 	examples = append(examples, examplesFromRandomPositiveDecimalValueSum()...)
+	examples = append(examples, examplesFromHappyLuaTime()...)
 
 	fmt.Println("Running ScriptEngine placeholder examples")
 	fmt.Println("========================================")
@@ -202,6 +203,23 @@ func examplesFromRandomPositiveDecimalValueSum() []placeholderExample {
 			source:      "go_placeholder_fenix_random_positive_decimal_value_sum.go",
 			description: "Call: TemplateEngine.RandomPositiveDecimalValue.Sum[1,2](2, 3, 4, 4, \",\")",
 			input:       buildPlaceholderInput("{{Fenix.RandomPositiveDecimalValue.Sum[1,2](2, 3, 4, 4, \",\")}}", "Fenix_RandomPositiveDecimalValue_Sum", []int{1, 2}, []string{"2", "3", "4", "4", ","}, true, 0),
+		},
+	}
+}
+
+func examplesFromHappyLuaTime() []placeholderExample {
+	return []placeholderExample{
+		{
+			source:      "luaFunctions/HappyLuaTime.lua",
+			description: "Call: HappyLuaTime()",
+			input: buildPlaceholderInput(
+				"{{HappyLuaTime()}}",
+				"HappyLuaTime",
+				[]int{},
+				[]string{},
+				true,
+				0,
+			),
 		},
 	}
 }

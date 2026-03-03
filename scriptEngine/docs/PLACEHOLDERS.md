@@ -10,6 +10,7 @@ This document describes placeholders currently supported in the Go-first ScriptE
 | `TemplateEngine.ControlledUniqueId(args[])` | `Fenix.ControlledUniqueId` | `goFenixControlledUniqueID` | `go_placeholder_fenix_controlled_unique_id.go` |
 | `TemplateEngine.RandomPositiveDecimalValue(args[])` | `Fenix.RandomPositiveDecimalValue` | `goFenixRandomPositiveDecimalValue` | `go_placeholder_fenix_random_positive_decimal_value.go` |
 | `TemplateEngine.RandomPositiveDecimalValue.Sum(args[])` | `Fenix.RandomPositiveDecimalValue.Sum` | `goFenixRandomPositiveDecimalValueSum` | `go_placeholder_fenix_random_positive_decimal_value_sum.go` |
+| _(Lua placeholder)_ | `HappyLuaTime` | `HappyLuaTime` | `luaFunctions/HappyLuaTime.lua` |
 
 Shared files:
 
@@ -155,6 +156,21 @@ Examples:
 {{Fenix.RandomPositiveDecimalValue.Sum[1,2](2, 3, 4, 4, ",")}}
 ```
 
+### 5) `HappyLuaTime` (Lua Placeholder)
+
+Contract:
+
+- No array indexes.
+- No function arguments.
+- Returns a string in the format:
+  - `My name is Lua and the time is HH:MM:SS`
+
+Example:
+
+```text
+{{HappyLuaTime()}}
+```
+
 ## TestData Placeholder Handling
 
 `ParseAndFormatPlaceholders(...)` supports:
@@ -181,3 +197,4 @@ Validation and deterministic behavior are covered in:
 - `Fenix_ControlledUniqueId_Examples.md`
 - `Fenix_RandomPositiveDecimalValue_Examples.md`
 - `Fenix_RandomPositiveDecimalValue_Sum_Examples.md`
+- `HappyLuaTime_Examples.md`

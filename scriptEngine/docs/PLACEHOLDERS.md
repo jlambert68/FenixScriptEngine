@@ -30,10 +30,8 @@ General format:
 Notes:
 
 - Dots in function names are converted to underscores internally.
-- `useEntropyFromTestCaseExecutionUuid` is optional (default: `true`).
-- `extraEntropy` is optional (default: `0`).
-- Arguments are split on commas, so avoid commas inside a single argument value.
-- Output from each function is inserted as plain text into the template.
+- Entropy tail values are parsed by the shared dispatcher.
+- For `Fenix.ControlledUniqueId`, Jira uses three function arguments: `(text, useEntropyFromTestCaseExecutionUuid, extraEntropy)`.
 
 ## Supported Functions
 
@@ -46,23 +44,14 @@ Description:
 
 Arguments:
 
-- No args: shift `0` days.
-- One integer arg: number of days to shift (can be negative).
+- Exactly one integer argument: shift days.
 
 Examples:
 
 ```text
-{{Fenix.TodayShiftDay()}}
+{{Fenix.TodayShiftDay(0)}}
 {{Fenix.TodayShiftDay(-1)}}
-{{Fenix.TodayShiftDay(10)}(false, 0)}
-```
-
-Sample result:
-
-```text
-{{Fenix.TodayShiftDay()}} -> 2026-02-24
-{{Fenix.TodayShiftDay(-1)}} -> 2026-02-23
-{{Fenix.TodayShiftDay(10)}(false, 0)} -> 2026-03-06
+{{Fenix.TodayShiftDay(10)}}
 ```
 
 ### 2) `Fenix.ControlledUniqueId`
@@ -70,13 +59,16 @@ Sample result:
 Description:
 
 - Replaces supported date/time/random tokens in an input string.
-- Deterministic output based on array index + entropy.
+- Deterministic output based on array index plus entropy.
 
 Arguments:
 
-- 1 string argument (the template text to transform).
+- Exactly three arguments:
+  - `textToProcess` (string)
+  - `useEntropyFromTestCaseExecutionUuid` (`true`/`false`)
+  - `extraEntropy` (integer)
 
-Supported tokens inside the argument:
+Supported date/time tokens:
 
 - `%YYYY-MM-DD%`
 - `%YYYYMMDD%`
@@ -85,22 +77,27 @@ Supported tokens inside the argument:
 - `%hh.mm.ss%`
 - `%hhmmss%`
 - `%hhmm%`
-- `%nnn%` (`n` repeated = number of digits)
-- `%a(length; seed)%` lowercase random string
-- `%A(length; seed)%` uppercase random string
+- `%mmss%`
+- `%ms%`
+- `%us%`
+- `%ns%`
+
+Supported random Jira tokens:
+
+- `%n(length)%`
+- `%a(length)%`
+- `%A(length)%`
+- `%aA(length)%`
+- `%an(length)%`
+- `%An(length)%`
+- `%aAn(length)%`
 
 Examples:
 
 ```text
-{{Fenix.ControlledUniqueId(Date-%YYYYMMDD%-%nnnn%)}}
-{{Fenix.ControlledUniqueId[2](ID-%a(6; 11)%-%A(4; 10)%)}(true, 5)}
-```
-
-Sample result:
-
-```text
-{{Fenix.ControlledUniqueId(Date-%YYYYMMDD%-%nnnn%)}} -> Date-20260224-5391
-{{Fenix.ControlledUniqueId[2](ID-%a(6; 11)%-%A(4; 10)%)}(true, 5)} -> ID-gbrmar-IMPV
+{{Fenix.ControlledUniqueId(%YYYY-MM-DD%, true, 0)}}
+{{Fenix.ControlledUniqueId[2](ID-%n(5)%-%a(4)%-%A(4)%, true, 5)}}
+{{Fenix.ControlledUniqueId(%Year: YYYY, Month: MM, Day: DD%, false, 1)}}
 ```
 
 ### 3) `Fenix.RandomPositiveDecimalValue`
@@ -111,8 +108,12 @@ Description:
 
 Arguments:
 
-- `2 args`: `(maxIntegerPartSize, numberOfDecimals)`
-- `4 args`: `(maxIntegerPartSize, numberOfDecimals, integerSpace, fractionSpace)` for zero-padding.
+- Exactly five arguments:
+  - `IntegerPrecision`
+  - `FractionPrecision`
+  - `IntegerFieldWidth`
+  - `FractionFieldWidth`
+  - `DecimalPointCharacter`
 
 Array index:
 
@@ -122,19 +123,9 @@ Array index:
 Examples:
 
 ```text
-{{Fenix.RandomPositiveDecimalValue(2, 3)}}
-{{Fenix.RandomPositiveDecimalValue[2](2, 3)}}
-{{Fenix.RandomPositiveDecimalValue(1, 2, 3, 4)}}
-{{Fenix.RandomPositiveDecimalValue[3](2, 3)}(true, 1)}
-```
-
-Sample result:
-
-```text
-{{Fenix.RandomPositiveDecimalValue(2, 3)}} -> 90.713
-{{Fenix.RandomPositiveDecimalValue[2](2, 3)}} -> 46.100
-{{Fenix.RandomPositiveDecimalValue(1, 2, 3, 4)}} -> 009.7100
-{{Fenix.RandomPositiveDecimalValue[3](2, 3)}(true, 1)} -> 67.843
+{{Fenix.RandomPositiveDecimalValue(2, 3, 2, 3, ".")}}
+{{Fenix.RandomPositiveDecimalValue[2](2, 3, 2, 3, ".")}}
+{{Fenix.RandomPositiveDecimalValue(2, 3, 4, 4, ",")}}
 ```
 
 ### 4) `Fenix.RandomPositiveDecimalValue.Sum`
@@ -146,9 +137,7 @@ Description:
 
 Arguments:
 
-- Same as `Fenix.RandomPositiveDecimalValue`:
-  - `(maxIntegerPartSize, numberOfDecimals)`
-  - or `(maxIntegerPartSize, numberOfDecimals, integerSpace, fractionSpace)`
+- Exactly the same five arguments as `Fenix.RandomPositiveDecimalValue`.
 
 Array indexes:
 
@@ -158,17 +147,9 @@ Array indexes:
 Examples:
 
 ```text
-{{Fenix.RandomPositiveDecimalValue.Sum[1,2,3](2, 3)}}
-{{Fenix.RandomPositiveDecimalValue.Sum[1,-2,3](2, 2)}}
-{{Fenix.RandomPositiveDecimalValue.Sum[1,2](2, 3, 4, 4)}(true, 7)}
-```
-
-Sample result:
-
-```text
-{{Fenix.RandomPositiveDecimalValue.Sum[1,2,3](2, 3)}} -> 140.238
-{{Fenix.RandomPositiveDecimalValue.Sum[1,-2,3](2, 2)}} -> 48.029999999999994
-{{Fenix.RandomPositiveDecimalValue.Sum[1,2](2, 3, 4, 4)}(true, 7)} -> 0131.3110
+{{Fenix.RandomPositiveDecimalValue.Sum[1](2, 3, 2, 3, ".")}}
+{{Fenix.RandomPositiveDecimalValue.Sum[-1,2](2, 3, 3, 3, ".")}}
+{{Fenix.RandomPositiveDecimalValue.Sum[1,2](2, 3, 4, 4, ",")}}
 ```
 
 ## TestData Placeholder
@@ -185,47 +166,19 @@ Format:
 
 The final segment is used as map key (for example `TestData.Customer.FirstName` uses key `FirstName`).
 
-Example:
-
-```text
-{{TestData.Customer.FirstName}}
-{{TestData.Customer.LastName}}
-{{TestData.Order.OrderId}}
-```
-
-Sample result:
-
-```text
-{{TestData.Customer.FirstName}} -> Alice
-{{TestData.Customer.LastName}} -> Doe
-{{TestData.Order.OrderId}} -> ORD-10045
-```
-
 ## Template Example
 
 ```text
 Hello {{TestData.Customer.FirstName}} {{TestData.Customer.LastName}},
 
 RunDate: {{Fenix.TodayShiftDay(0)}}
-CorrelationId: {{Fenix.ControlledUniqueId(CORR-%YYYYMMDD%-%nnnn%-%A(4; 10)%)}}
-Price: {{Fenix.RandomPositiveDecimalValue(2, 2)}}
-Net: {{Fenix.RandomPositiveDecimalValue.Sum[1,-2,3](2, 2)}}
+CorrelationId: {{Fenix.ControlledUniqueId(CORR-%YYYYMMDD%-%n(4)%-%A(4)%, true, 0)}}
+Price: {{Fenix.RandomPositiveDecimalValue(2, 2, 3, 2, ".")}}
+Net: {{Fenix.RandomPositiveDecimalValue.Sum[1,-2,3](2, 2, 4, 2, ".")}}
 ```
 
-Rendered sample:
-
-```text
-Hello Alice Doe,
-
-RunDate: 2026-02-24
-CorrelationId: CORR-20260224-5391-IMPV
-Price: 90.71
-Net: 48.029999999999994
-```
-
-Notes for sample results:
+Notes:
 
 - Date/time-based results change with current local time.
-- Random-related placeholders are deterministic for the same input + execution UUID + entropy.
-- TestData sample results depend on your loaded `testDataPointValues` map.
-- Values shown above were generated on February 24, 2026 using testCaseExecutionUuid `f8c06f7e-0a8a-4d75-9f25-5e5fb8d2a6d3`.
+- Random-related placeholders are deterministic for the same input plus execution UUID and entropy values.
+- `Fenix.ControlledUniqueId` uses Jira token formats only.

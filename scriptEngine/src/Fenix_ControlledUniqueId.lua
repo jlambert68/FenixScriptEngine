@@ -269,7 +269,7 @@ local result = Fenix_ControlledUniqueId(inputTable)
 print(inputString)
 print(result)
 
-local inputString = "Date: %YYYY-MM-DD%, Date: %YYYYMMDD%, Date: %YYMMDD%, Time: %hh:mm:ss%, Time: %hhmmss%, Time: %hhmm%, Random Number: %nnnnn%, Random String: %a(5; 11)%, Random String Uppercase: %A(5; 10)%, Time: %hh:mm:ss%, Time: %hh.mm.ss% "
+local inputString = "Date: %YYYY-MM-DD%, Date: %YYYYMMDD%, Date: %YYMMDD%, Time: %hh:mm:ss%, Time: %hhmmss%, Time: %hhmm%, Random Number: %n(5)%, Random String: %a(5)%, Random String Uppercase: %A(5)%, Mixed: %aAn(5)%, Time: %hh:mm:ss%, Time: %hh.mm.ss% "
 local inputTable = {"ControlledUniqueId", {0}, {inputString}, {0}}
 local result = Fenix_ControlledUniqueId(inputTable)
 print(inputString)

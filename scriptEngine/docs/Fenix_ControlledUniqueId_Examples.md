@@ -1,63 +1,74 @@
 # Fenix_ControlledUniqueId - Supported Replacements and Processing
 
-This file summarizes what `scriptEngine/src/Fenix_ControlledUniqueId.lua` supports.
+This file summarizes current Jira-style token support for `Fenix.ControlledUniqueId`.
+
+## Function Signature
+
+`Fenix.ControlledUniqueId` expects exactly three function arguments:
+
+1. `textToProcess` (string)
+2. `useEntropyFromExecutionUUID` (`true`/`false`)
+3. `extraEntropy` (integer)
+
+Examples:
+
+```text
+{{Fenix.ControlledUniqueId(%YYYY-MM-DD%, true, 0)}}
+{{Fenix.ControlledUniqueId(%n(5)%-%a(5)%-%A(5)%, true, 5)}}
+{{Fenix.ControlledUniqueId(%Year: YYYY, Month: MM, Day: DD%, false, 1)}}
+```
 
 ## Supported Replacements
 
-The function replaces these tokens in the input text (`inputTable[3][1]`):
+Date/time token replacements:
 
-| Token | Replacement format | Placeholder usage (without attribute names) | Placeholder usage (with attribute names) | Example result |
-|---|---|---|---|---|
-| `%YYYY-MM-DD%` | Current date (`YYYY-MM-DD`) | `{{Fenix.ControlledUniqueId(@Date=%YYYY-MM-DD%)}}` | `{{Fenix.ControlledUniqueId(@InputText=Date=%YYYY-MM-DD%)}}` | `Date=2026-02-24` |
-| `%YYYYMMDD%` | Current date (`YYYYMMDD`) | `{{Fenix.ControlledUniqueId(@Date=%YYYYMMDD%)}}` | `{{Fenix.ControlledUniqueId(@InputText=Date=%YYYYMMDD%)}}` | `Date=20260224` |
-| `%YYMMDD%` | Current date (`YYMMDD`) | `{{Fenix.ControlledUniqueId(@Date=%YYMMDD%)}}` | `{{Fenix.ControlledUniqueId(@InputText=Date=%YYMMDD%)}}` | `Date=260224` |
-| `%hh:mm:ss%` | Current time (`HH:MM:SS`) | `{{Fenix.ControlledUniqueId(@Time=%hh:mm:ss%)}}` | `{{Fenix.ControlledUniqueId(@InputText=Time=%hh:mm:ss%)}}` | `Time=13:07:09` |
-| `%hh.mm.ss%` | Current time (`HH.MM.SS`) | `{{Fenix.ControlledUniqueId(@Time=%hh.mm.ss%)}}` | `{{Fenix.ControlledUniqueId(@InputText=Time=%hh.mm.ss%)}}` | `Time=13.07.09` |
-| `%hhmmss%` | Current time (`HHMMSS`) | `{{Fenix.ControlledUniqueId(@Time=%hhmmss%)}}` | `{{Fenix.ControlledUniqueId(@InputText=Time=%hhmmss%)}}` | `Time=130709` |
-| `%hhmm%` | Current time (`HHMM`) | `{{Fenix.ControlledUniqueId(@Time=%hhmm%)}}` | `{{Fenix.ControlledUniqueId(@InputText=Time=%hhmm%)}}` | `Time=1307` |
-| `%nnn...%` | Zero-padded random digits (length = count of `n`) | `{{Fenix.ControlledUniqueId(@Rand=%nnnnn%)}}` | `{{Fenix.ControlledUniqueId(@InputText=Rand=%nnnnn%)}}` | `Rand=84018` |
-| `%a(length; seed)%` | Random lowercase string | `{{Fenix.ControlledUniqueId(@Rand=%a(5; 11)%)}}` | `{{Fenix.ControlledUniqueId(@InputText=Rand=%a(5; 11)%)}}` | `Rand=ynint` |
-| `%A(length; seed)%` | Random uppercase string | `{{Fenix.ControlledUniqueId(@Rand=%A(5; 10)%)}}` | `{{Fenix.ControlledUniqueId(@InputText=Rand=%A(5; 10)%)}}` | `Rand=OPNEV` |
+| Token | Replacement format |
+|---|---|
+| `%YYYY-MM-DD%` | Current date (`YYYY-MM-DD`) |
+| `%YYYYMMDD%` | Current date (`YYYYMMDD`) |
+| `%YYMMDD%` | Current date (`YYMMDD`) |
+| `%hh:mm:ss%` | Current time (`HH:MM:SS`) |
+| `%hh.mm.ss%` | Current time (`HH.MM.SS`) |
+| `%hhmmss%` | Current time (`HHMMSS`) |
+| `%hhmm%` | Current time (`HHMM`) |
+| `%mmss%` | Current time (`MMSS`) |
+| `%ms%` | Milliseconds (`000-999`) |
+| `%us%` | Microseconds (`000000-999999`) |
+| `%ns%` | Nanoseconds (`000000000-999999999`) |
+
+Random Jira token replacements:
+
+| Token | Character set |
+|---|---|
+| `%n(length)%` | digits (`0-9`) |
+| `%a(length)%` | lowercase letters (`a-z`) |
+| `%A(length)%` | uppercase letters (`A-Z`) |
+| `%aA(length)%` | mixed letters (`a-zA-Z`) |
+| `%an(length)%` | lowercase alphanumeric (`a-z0-9`) |
+| `%An(length)%` | uppercase alphanumeric (`A-Z0-9`) |
+| `%aAn(length)%` | mixed alphanumeric (`a-zA-Z0-9`) |
 
 ## Processing Behavior
 
-| Behavior | What the Lua file does | Placeholder usage (without attribute names) | Placeholder usage (with attribute names) | Example result |
-|---|---|---|---|---|
-| Default array index | If `inputTable[2]` is empty, index defaults to `{1}` | `{{Fenix.ControlledUniqueId(@Rand=%nnn%)}}` | `{{Fenix.ControlledUniqueId(@InputText=Rand=%nnn%)}}` | `Rand=840` |
-| Single array index only | More than one array index is rejected | `{{Fenix.ControlledUniqueId[@1,@2](@X)}}` | `{{Fenix.ControlledUniqueId[@arrayIndexes=[@1,@2]](@InputText=@X)}}` | Error: `[1,2]` |
-| Entropy table type check | `inputTable[4]` must be a table | `{{Fenix.ControlledUniqueId(@X)}(@<invalid>)}` | `{{Fenix.ControlledUniqueId(@InputText=@X)}(@useEntropy=@<invalid>)}` | Error: `Error - entropy is not of type 'Table', but is of type 'string'.` |
-| Entropy param 1 validation | `entropyTable[1]` must be boolean (or string convertable to bool) | `{{Fenix.ControlledUniqueId(@X)}(@nope,@0)}` | `{{Fenix.ControlledUniqueId(@InputText=@X)}(@useEntropy=@nope, @extraEntropy=@0)}` | Error: `Error - entropy parameter no. 1 must be of type 'Boolean'...` |
-| Entropy param 2 validation | `entropyTable[2]` must be integer (or string convertable to integer) | `{{Fenix.ControlledUniqueId(@X)}(@true,@nope)}` | `{{Fenix.ControlledUniqueId(@InputText=@X)}(@useEntropy=@true, @extraEntropy=@nope)}` | Error: `Error - entropy parameters no. 2 must be of type 'Integer'...` |
-| Text type check | `inputTable[3][1]` must be a string | `{{Fenix.ControlledUniqueId(@<non-string>)}}` | `{{Fenix.ControlledUniqueId(@InputText=@<non-string>)}}` | Error: `textToProcess must be a string, got number` |
+- If array index is omitted, default index `1` is used.
+- At most one array index is allowed.
+- Output is deterministic for the same `textToProcess`, array index, execution UUID, and entropy values.
 
-## Seed/Entropy Details in This Lua File
+## Full Example
 
-- For `%nnn...%` random numbers, seed is based on:
-  - `arrayPositionTable[1] + entropyTable[2]`
-- For `%a(length; seed)%` and `%A(length; seed)%`, the token's own `seed` argument is used for random string generation.
-- `entropyTable[1]` (boolean) is validated, but not used in random generation logic inside this Lua file.
-
-## Full Example From Lua File Style
-
-Input text:
+Input:
 
 ```text
-Date: %YYYY-MM-DD%, Date: %YYYYMMDD%, Date: %YYMMDD%, Time: %hh:mm:ss%, Time: %hhmmss%, Time: %hhmm%, Random Number: %nnnnn%, Random String: %a(5; 11)%, Random String Uppercase: %A(5; 10)%, Time: %hh:mm:ss%, Time: %hh.mm.ss%
+{{Fenix.ControlledUniqueId(Date=%YYYY-MM-DD%, Compact=%hhmmss%, Rand=%n(5)%, Mix=%aAn(4)%, true, 0)}}
 ```
 
-Function input table:
-
-```lua
-{"Fenix_ControlledUniqueId", {0}, {"Date: %YYYY-MM-DD%, Date: %YYYYMMDD%, Date: %YYMMDD%, Time: %hh:mm:ss%, Time: %hhmmss%, Time: %hhmm%, Random Number: %nnnnn%, Random String: %a(5; 11)%, Random String Uppercase: %A(5; 10)%, Time: %hh:mm:ss%, Time: %hh.mm.ss% "}, {true, 0}}
-```
-
-Result:
+Possible output shape:
 
 ```text
-Date: 2026-02-24, Date: 20260224, Date: 260224, Time: 13:07:09, Time: 130709, Time: 1307, Random Number: 84018, Random String: ynint, Random String Uppercase: OPNEV, Time: 13:07:09, Time: 13.07.09
+Date=2026-03-02, Compact=153045, Rand=79410, Mix=g7Qx
 ```
 
 ## Notes
 
-- Date/time example outputs above were generated with fixed time `2026-02-24 13:07:09` for reproducibility.
-- Random outputs shown are deterministic for the same input table values.
+- Jira token formats are the supported random formats.
+- Legacy non-Jira random formats are not supported.

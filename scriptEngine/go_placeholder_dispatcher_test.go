@@ -7,6 +7,38 @@ import (
 	"time"
 )
 
+func logDispatcherInputMatrix(t *testing.T, callLabel string, input []interface{}, testCaseExecutionUUID string) {
+	t.Helper()
+	t.Logf(
+		"Dispatcher input [%s]\n  Input: %v\n  TestCaseExecutionUUID: %q",
+		callLabel,
+		input,
+		testCaseExecutionUUID,
+	)
+}
+
+func logDispatcherExecutionResult(t *testing.T, callLabel string, value string, handled bool, err error) {
+	t.Helper()
+	t.Logf(
+		"Dispatcher execution [%s]\n  Value: %q\n  Handled: %t\n  Error: %v",
+		callLabel,
+		value,
+		handled,
+		err,
+	)
+}
+
+func logDispatcherParseResult(t *testing.T, callLabel string, parsedInput GoPlaceholderInput, err error) {
+	t.Helper()
+	if err != nil {
+		t.Logf("Dispatcher parse [%s]\n  ParsedInput: <invalid>\n  Error: %v", callLabel, err)
+		return
+	}
+
+	logPlaceholderInputMatrix(t, callLabel+"-parsed", parsedInput)
+	t.Logf("Dispatcher parse [%s]\n  Error: <nil>", callLabel)
+}
+
 func TestExecuteGoPlaceholderFunction_ShouldHandleRegisteredFunction(t *testing.T) {
 	// Uses a registered function name and verifies Go dispatch happens before Lua fallback.
 	input := []interface{}{
@@ -18,7 +50,10 @@ func TestExecuteGoPlaceholderFunction_ShouldHandleRegisteredFunction(t *testing.
 		uint64(0),
 	}
 
-	value, handled, err := executeGoPlaceholderFunction(input, "123e4567-e89b-12d3-a456-426614174000")
+	testCaseExecutionUUID := "123e4567-e89b-12d3-a456-426614174000"
+	logDispatcherInputMatrix(t, "registered-function", input, testCaseExecutionUUID)
+	value, handled, err := executeGoPlaceholderFunction(input, testCaseExecutionUUID)
+	logDispatcherExecutionResult(t, "registered-function", value, handled, err)
 	if handled == false {
 		t.Fatalf("expected Go handler to process function")
 	}
@@ -41,7 +76,10 @@ func TestExecuteGoPlaceholderFunction_ShouldReturnErrorForInvalidArgument(t *tes
 		uint64(0),
 	}
 
-	_, handled, err := executeGoPlaceholderFunction(input, "execution-uuid")
+	testCaseExecutionUUID := "execution-uuid"
+	logDispatcherInputMatrix(t, "invalid-argument", input, testCaseExecutionUUID)
+	value, handled, err := executeGoPlaceholderFunction(input, testCaseExecutionUUID)
+	logDispatcherExecutionResult(t, "invalid-argument", value, handled, err)
 	if handled == false {
 		t.Fatalf("expected Go handler to process function")
 	}
@@ -61,7 +99,10 @@ func TestExecuteGoPlaceholderFunction_ShouldIgnoreUnknownFunction(t *testing.T) 
 		uint64(0),
 	}
 
-	_, handled, err := executeGoPlaceholderFunction(input, "execution-uuid")
+	testCaseExecutionUUID := "execution-uuid"
+	logDispatcherInputMatrix(t, "unknown-function", input, testCaseExecutionUUID)
+	value, handled, err := executeGoPlaceholderFunction(input, testCaseExecutionUUID)
+	logDispatcherExecutionResult(t, "unknown-function", value, handled, err)
 	if handled == true {
 		t.Fatalf("expected unknown function to be handled by Lua fallback")
 	}
@@ -82,7 +123,10 @@ func TestParseGoPlaceholderInput_ShouldValidateEntropyTypes(t *testing.T) {
 
 	invalidUseEntropy := append([]interface{}{}, baseInput...)
 	invalidUseEntropy[4] = "false"
-	_, err := parseGoPlaceholderInput(invalidUseEntropy, "execution-uuid")
+	testCaseExecutionUUID := "execution-uuid"
+	logDispatcherInputMatrix(t, "parse-invalid-use-entropy", invalidUseEntropy, testCaseExecutionUUID)
+	parsedInput, err := parseGoPlaceholderInput(invalidUseEntropy, testCaseExecutionUUID)
+	logDispatcherParseResult(t, "parse-invalid-use-entropy", parsedInput, err)
 	if err == nil {
 		t.Fatalf("expected type validation error for input parameter 4")
 	}
@@ -92,7 +136,9 @@ func TestParseGoPlaceholderInput_ShouldValidateEntropyTypes(t *testing.T) {
 
 	invalidExtraEntropy := append([]interface{}{}, baseInput...)
 	invalidExtraEntropy[5] = 0
-	_, err = parseGoPlaceholderInput(invalidExtraEntropy, "execution-uuid")
+	logDispatcherInputMatrix(t, "parse-invalid-extra-entropy", invalidExtraEntropy, testCaseExecutionUUID)
+	parsedInput, err = parseGoPlaceholderInput(invalidExtraEntropy, testCaseExecutionUUID)
+	logDispatcherParseResult(t, "parse-invalid-extra-entropy", parsedInput, err)
 	if err == nil {
 		t.Fatalf("expected type validation error for input parameter 5")
 	}
@@ -113,7 +159,9 @@ func TestParseGoPlaceholderInput_ShouldCalculateEntropyFromTail(t *testing.T) {
 		uint64(7),
 	}
 
+	logDispatcherInputMatrix(t, "parse-without-uuid-entropy", inputWithoutUUIDEntropy, testCaseExecutionUUID)
 	parsedInput, err := parseGoPlaceholderInput(inputWithoutUUIDEntropy, testCaseExecutionUUID)
+	logDispatcherParseResult(t, "parse-without-uuid-entropy", parsedInput, err)
 	if err != nil {
 		t.Fatalf("expected no parse error, got: %v", err)
 	}
@@ -133,7 +181,9 @@ func TestParseGoPlaceholderInput_ShouldCalculateEntropyFromTail(t *testing.T) {
 		uint64(7),
 	}
 
+	logDispatcherInputMatrix(t, "parse-with-uuid-entropy", inputWithUUIDEntropy, testCaseExecutionUUID)
 	parsedInput, err = parseGoPlaceholderInput(inputWithUUIDEntropy, testCaseExecutionUUID)
+	logDispatcherParseResult(t, "parse-with-uuid-entropy", parsedInput, err)
 	if err != nil {
 		t.Fatalf("expected no parse error, got: %v", err)
 	}
